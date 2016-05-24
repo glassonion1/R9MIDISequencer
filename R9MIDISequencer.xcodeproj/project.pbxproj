@@ -1,0 +1,416 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		004F85941C7F018E0062E56E /* R9MIDISequencer.h in Headers */ = {isa = PBXBuildFile; fileRef = 004F85931C7F018E0062E56E /* R9MIDISequencer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		004F859B1C7F018E0062E56E /* R9MIDISequencer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 004F85901C7F018E0062E56E /* R9MIDISequencer.framework */; };
+		004F85A01C7F018E0062E56E /* R9MIDISequencerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 004F859F1C7F018E0062E56E /* R9MIDISequencerTests.swift */; };
+		004F85AE1C7F02030062E56E /* MIDIMessageListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 004F85AA1C7F02030062E56E /* MIDIMessageListener.swift */; };
+		004F85B01C7F02030062E56E /* Sampler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 004F85AC1C7F02030062E56E /* Sampler.swift */; };
+		004F85B11C7F02030062E56E /* Sequencer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 004F85AD1C7F02030062E56E /* Sequencer.swift */; };
+		004F85C91C80281C0062E56E /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 004F85C81C80281C0062E56E /* Constants.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		004F859C1C7F018E0062E56E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 004F85871C7F018E0062E56E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 004F858F1C7F018E0062E56E;
+			remoteInfo = R9MIDISequencer;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		004F85901C7F018E0062E56E /* R9MIDISequencer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = R9MIDISequencer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		004F85931C7F018E0062E56E /* R9MIDISequencer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = R9MIDISequencer.h; sourceTree = "<group>"; };
+		004F85951C7F018E0062E56E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		004F859A1C7F018E0062E56E /* R9MIDISequencerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = R9MIDISequencerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		004F859F1C7F018E0062E56E /* R9MIDISequencerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = R9MIDISequencerTests.swift; sourceTree = "<group>"; };
+		004F85A11C7F018E0062E56E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		004F85AA1C7F02030062E56E /* MIDIMessageListener.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MIDIMessageListener.swift; sourceTree = "<group>"; };
+		004F85AC1C7F02030062E56E /* Sampler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sampler.swift; sourceTree = "<group>"; };
+		004F85AD1C7F02030062E56E /* Sequencer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sequencer.swift; sourceTree = "<group>"; };
+		004F85C81C80281C0062E56E /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		004F858C1C7F018E0062E56E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		004F85971C7F018E0062E56E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				004F859B1C7F018E0062E56E /* R9MIDISequencer.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		004F85861C7F018E0062E56E = {
+			isa = PBXGroup;
+			children = (
+				004F85921C7F018E0062E56E /* R9MIDISequencer */,
+				004F859E1C7F018E0062E56E /* R9MIDISequencerTests */,
+				004F85911C7F018E0062E56E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		004F85911C7F018E0062E56E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				004F85901C7F018E0062E56E /* R9MIDISequencer.framework */,
+				004F859A1C7F018E0062E56E /* R9MIDISequencerTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		004F85921C7F018E0062E56E /* R9MIDISequencer */ = {
+			isa = PBXGroup;
+			children = (
+				004F85C81C80281C0062E56E /* Constants.swift */,
+				004F85AC1C7F02030062E56E /* Sampler.swift */,
+				004F85AD1C7F02030062E56E /* Sequencer.swift */,
+				004F85AA1C7F02030062E56E /* MIDIMessageListener.swift */,
+				004F85931C7F018E0062E56E /* R9MIDISequencer.h */,
+				004F85951C7F018E0062E56E /* Info.plist */,
+			);
+			path = R9MIDISequencer;
+			sourceTree = "<group>";
+		};
+		004F859E1C7F018E0062E56E /* R9MIDISequencerTests */ = {
+			isa = PBXGroup;
+			children = (
+				004F859F1C7F018E0062E56E /* R9MIDISequencerTests.swift */,
+				004F85A11C7F018E0062E56E /* Info.plist */,
+			);
+			path = R9MIDISequencerTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		004F858D1C7F018E0062E56E /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				004F85941C7F018E0062E56E /* R9MIDISequencer.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		004F858F1C7F018E0062E56E /* R9MIDISequencer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 004F85A41C7F018E0062E56E /* Build configuration list for PBXNativeTarget "R9MIDISequencer" */;
+			buildPhases = (
+				004F858B1C7F018E0062E56E /* Sources */,
+				004F858C1C7F018E0062E56E /* Frameworks */,
+				004F858D1C7F018E0062E56E /* Headers */,
+				004F858E1C7F018E0062E56E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = R9MIDISequencer;
+			productName = R9MIDISequencer;
+			productReference = 004F85901C7F018E0062E56E /* R9MIDISequencer.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		004F85991C7F018E0062E56E /* R9MIDISequencerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 004F85A71C7F018E0062E56E /* Build configuration list for PBXNativeTarget "R9MIDISequencerTests" */;
+			buildPhases = (
+				004F85961C7F018E0062E56E /* Sources */,
+				004F85971C7F018E0062E56E /* Frameworks */,
+				004F85981C7F018E0062E56E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				004F859D1C7F018E0062E56E /* PBXTargetDependency */,
+			);
+			name = R9MIDISequencerTests;
+			productName = R9MIDISequencerTests;
+			productReference = 004F859A1C7F018E0062E56E /* R9MIDISequencerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		004F85871C7F018E0062E56E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0720;
+				LastUpgradeCheck = 0720;
+				ORGANIZATIONNAME = Revolution9;
+				TargetAttributes = {
+					004F858F1C7F018E0062E56E = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
+					004F85991C7F018E0062E56E = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
+				};
+			};
+			buildConfigurationList = 004F858A1C7F018E0062E56E /* Build configuration list for PBXProject "R9MIDISequencer" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 004F85861C7F018E0062E56E;
+			productRefGroup = 004F85911C7F018E0062E56E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				004F858F1C7F018E0062E56E /* R9MIDISequencer */,
+				004F85991C7F018E0062E56E /* R9MIDISequencerTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		004F858E1C7F018E0062E56E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		004F85981C7F018E0062E56E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		004F858B1C7F018E0062E56E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				004F85B01C7F02030062E56E /* Sampler.swift in Sources */,
+				004F85AE1C7F02030062E56E /* MIDIMessageListener.swift in Sources */,
+				004F85B11C7F02030062E56E /* Sequencer.swift in Sources */,
+				004F85C91C80281C0062E56E /* Constants.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		004F85961C7F018E0062E56E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				004F85A01C7F018E0062E56E /* R9MIDISequencerTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		004F859D1C7F018E0062E56E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 004F858F1C7F018E0062E56E /* R9MIDISequencer */;
+			targetProxy = 004F859C1C7F018E0062E56E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		004F85A21C7F018E0062E56E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		004F85A31C7F018E0062E56E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		004F85A51C7F018E0062E56E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = YES;
+				INFOPLIST_FILE = R9MIDISequencer/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				OTHER_CFLAGS = "-fembed-bitcode";
+				PRODUCT_BUNDLE_IDENTIFIER = com.9revolution9.R9MIDISequencer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		004F85A61C7F018E0062E56E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = YES;
+				INFOPLIST_FILE = R9MIDISequencer/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				OTHER_CFLAGS = "-fembed-bitcode";
+				PRODUCT_BUNDLE_IDENTIFIER = com.9revolution9.R9MIDISequencer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		004F85A81C7F018E0062E56E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = R9MIDISequencerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.9revolution9.R9MIDISequencerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		004F85A91C7F018E0062E56E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = R9MIDISequencerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.9revolution9.R9MIDISequencerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		004F858A1C7F018E0062E56E /* Build configuration list for PBXProject "R9MIDISequencer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				004F85A21C7F018E0062E56E /* Debug */,
+				004F85A31C7F018E0062E56E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		004F85A41C7F018E0062E56E /* Build configuration list for PBXNativeTarget "R9MIDISequencer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				004F85A51C7F018E0062E56E /* Debug */,
+				004F85A61C7F018E0062E56E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		004F85A71C7F018E0062E56E /* Build configuration list for PBXNativeTarget "R9MIDISequencerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				004F85A81C7F018E0062E56E /* Debug */,
+				004F85A91C7F018E0062E56E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 004F85871C7F018E0062E56E /* Project object */;
+}
