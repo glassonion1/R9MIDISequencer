@@ -1,6 +1,6 @@
 # R9MIDISequencer
 
-[![Platform support](https://img.shields.io/badge/platform-ios-lightgrey.svg?style=flat-square)](https://github.com/glassonion1/R9MIDISequencer/blob/master/LICENSE.md)[![License MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/glassonion1/R9MIDISequencer/blob/master/LICENSE.md)
+[![Platform support](https://img.shields.io/badge/platform-ios-lightgrey.svg?style=flat-square)](https://github.com/glassonion1/R9MIDISequencer/blob/master/LICENSE.md) [![License MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/glassonion1/R9MIDISequencer/blob/master/LICENSE.md)
 
 # Introduction
 
