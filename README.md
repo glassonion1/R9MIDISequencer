@@ -4,6 +4,8 @@
 [![License MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/glassonion1/R9MIDISequencer/blob/master/LICENSE.md)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
+MIDI Sequencer for iOS on swift.
+
 # Feature
 
 ## Sequencing
