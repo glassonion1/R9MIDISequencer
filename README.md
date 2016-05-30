@@ -33,11 +33,36 @@ Play MIDI file using the Sequencer:
 ```
 let sequencer = Sequencer(sampler: sampler, enableLooping: true)
 
-sequencer.addListener(self)
-
 let midiUrl = NSBundle.mainBundle().URLForResource("MIDI File",
                                                withExtension: "mid")
 sequencer.playWithMidiURL(midiUrl)
+```
+
+MIDI message delegate
+
+```
+class GameScene: SKScene, MIDIMessageListener {
+    override func didMoveToView(view: SKView) {
+        
+        ...Initialize sampler
+        
+        let sequencer = Sequencer(sampler: sampler, enableLooping: true)
+        sequencer.addListener(self)
+        
+        ...Play MIDI
+        
+    }
+    
+    func midiNoteOn(note: UInt32, velocity: UInt32, channel: UInt32) {
+        // Call back of note on message.
+    }
+    func midiNoteOff(note: UInt32, channel: UInt32) {
+        // Call back of note off message.
+    }
+    func midiSequenceDidFinish() {
+        // Call back of finish MIDI sequence.
+    }
+}
 ```
 
 # Installation
