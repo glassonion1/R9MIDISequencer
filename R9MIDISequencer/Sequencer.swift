@@ -53,7 +53,7 @@ public class Sequencer {
         let destinationCount = MIDIGetNumberOfDestinations()
         print("DestinationCount: \(destinationCount)")
         var found = false
-        for var i = 0; i < destinationCount; ++i {
+        for i in 0 ..< destinationCount {
             let destination: MIDIEndpointRef = MIDIGetDestination(i)
             var cfName: Unmanaged<CFString>?
             result = MIDIObjectGetStringProperty(destination, kMIDIPropertyName, &cfName)
@@ -93,7 +93,7 @@ public class Sequencer {
         }
 
         let destinationCount = MIDIGetNumberOfDestinations()
-        for var i = 0; i < destinationCount; ++i {
+        for i in 0 ..< destinationCount {
             let src: MIDIEndpointRef = MIDIGetDestination(i)
             result = MusicSequenceSetMIDIEndpoint(self.musicSequence, src);
             if result != OSStatus(noErr) {
@@ -134,7 +134,7 @@ public class Sequencer {
             }
         }
         MusicSequenceSetUserCallback(self.musicSequence, callBack, UnsafeMutablePointer<Void>(bridge(self)))
-        var musicTrack = MusicTrack()
+        var musicTrack: MusicTrack = nil
         MusicSequenceGetIndTrack(self.musicSequence, 0, &musicTrack)
         let userData: UnsafeMutablePointer<MusicEventUserData> = UnsafeMutablePointer.alloc(1)
         MusicTrackNewUserEvent(musicTrack, ceil(musicLengthInBeats), userData)
