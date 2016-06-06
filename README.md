@@ -38,7 +38,7 @@ let midiUrl = NSBundle.mainBundle().URLForResource("MIDI File",
 sequencer.playWithMidiURL(midiUrl)
 ```
 
-MIDI message delegate
+Callback from MIDI message
 
 ```
 class GameScene: SKScene, MIDIMessageListener {
