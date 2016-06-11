@@ -6,7 +6,7 @@
 //  Copyright © 2016年 Revolution9. All rights reserved.
 //
 
-#import <AVFoundation/AVFoundation.h>
+#import <Foundation/Foundation.h>
 
 //! Project version number for R9MIDISequencer.
 FOUNDATION_EXPORT double R9MIDISequencerVersionNumber;

@@ -6,7 +6,7 @@
 //  Copyright © 2016年 Taisuke Fujita. All rights reserved.
 //
 
-import Foundation
+import AVFoundation
 
 public class Sampler {
     
