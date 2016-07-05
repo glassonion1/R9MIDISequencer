@@ -7,6 +7,7 @@
 //
 
 import AVFoundation
+import CoreMIDI
 
 public class Sampler {
     

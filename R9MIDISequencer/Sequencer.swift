@@ -7,6 +7,8 @@
 //
 
 import AVFoundation
+import CoreMIDI
+import AudioToolbox
 
 public class Sequencer {
 
