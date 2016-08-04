@@ -80,6 +80,7 @@ public class Sequencer {
     
     public func playWithMidiURL(midiFileUrl: NSURL) -> NSTimeInterval {
         self.stop()
+        sequencer.currentPositionInSeconds = 0
 
         // MIDIファイルの読み込み
         do {
@@ -145,9 +146,16 @@ public class Sequencer {
         return sequencer.beatsForSeconds(60)
     }
     
+    public func replay() {
+        do {
+            try sequencer.start()
+        } catch {
+            print("Error play MIDI file")
+        }
+    }
+    
     public func stop() {
         sequencer.stop()
-        sequencer.currentPositionInSeconds = 0
     }
     
     private func MIDIReadBlock(
