@@ -10,6 +10,18 @@ import AVFoundation
 import CoreMIDI
 import AudioToolbox
 
+
+let callBack: @convention(c) (UnsafeMutablePointer<Void>, MusicSequence, MusicTrack, MusicTimeStamp, UnsafePointer<MusicEventUserData>, MusicTimeStamp, MusicTimeStamp) -> Void = {
+    (obj, seq, mt, timestamp, userData, timestamp2, timestamp3) in
+    // Cタイプ関数なのでselfを使えません
+    let mySelf: Sequencer = bridge(obj)
+    for listener in mySelf.midiListeners {
+        NSOperationQueue.mainQueue().addOperationWithBlock({
+            listener.midiSequenceDidFinish()
+        })
+    }
+}
+
 public class Sequencer {
 
     var enableLooping = false
@@ -78,6 +90,10 @@ public class Sequencer {
         self.init(sampler: sampler, enableLooping: false)
     }
     
+    deinit {
+        MIDIEndpointDispose(endPoint)
+    }
+
     public func playWithMidiURL(midiFileUrl: NSURL) -> NSTimeInterval {
         self.stop()
         sequencer.currentPositionInSeconds = 0
@@ -126,16 +142,7 @@ public class Sequencer {
                 musicLengthInBeats = lengthInBeats
             }
         }
-        let callBack: @convention(c) (UnsafeMutablePointer<Void>, MusicSequence, MusicTrack, MusicTimeStamp, UnsafePointer<MusicEventUserData>, MusicTimeStamp, MusicTimeStamp) -> Void = {
-            (obj, seq, mt, timestamp, userData, timestamp2, timestamp3) in
-            // Cタイプ関数なのでselfを使えません
-            let mySelf: Sequencer = bridge(obj)
-            for listener in mySelf.midiListeners {
-                NSOperationQueue.mainQueue().addOperationWithBlock({
-                    listener.midiSequenceDidFinish()
-                })
-            }
-        }
+
         MusicSequenceSetUserCallback(self.musicSequence, callBack, UnsafeMutablePointer<Void>(bridge(self)))
         var musicTrack: MusicTrack = nil
         MusicSequenceGetIndTrack(self.musicSequence, 0, &musicTrack)
