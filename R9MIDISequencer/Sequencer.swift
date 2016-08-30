@@ -11,19 +11,20 @@ import CoreMIDI
 import AudioToolbox
 
 
-let callBack: @convention(c) (UnsafeMutablePointer<Void>, MusicSequence, MusicTrack, MusicTimeStamp, UnsafePointer<MusicEventUserData>, MusicTimeStamp, MusicTimeStamp) -> Void = {
-    (obj, seq, mt, timestamp, userData, timestamp2, timestamp3) in
-    // Cタイプ関数なのでselfを使えません
-    let mySelf: Sequencer = bridge(obj)
-    for listener in mySelf.midiListeners {
-        NSOperationQueue.mainQueue().addOperationWithBlock({
-            listener.midiSequenceDidFinish()
-        })
-    }
-}
-
 public class Sequencer {
 
+    let callBack: @convention(c) (UnsafeMutablePointer<Void>, MusicSequence, MusicTrack, MusicTimeStamp, UnsafePointer<MusicEventUserData>, MusicTimeStamp, MusicTimeStamp) -> Void = {
+        (obj, seq, mt, timestamp, userData, timestamp2, timestamp3) in
+        // Cタイプ関数なのでselfを使えません
+        //let mySelf: Sequencer = bridge(obj)
+        let mySelf: Sequencer = unsafeBitCast(obj, Sequencer.self)
+        for listener in mySelf.midiListeners {
+            NSOperationQueue.mainQueue().addOperationWithBlock({
+                listener.midiSequenceDidFinish()
+            })
+        }
+    }
+    
     var enableLooping = false
     
     var sequencer: AVAudioSequencer
@@ -143,7 +144,7 @@ public class Sequencer {
             }
         }
 
-        MusicSequenceSetUserCallback(self.musicSequence, callBack, UnsafeMutablePointer<Void>(bridge(self)))
+        MusicSequenceSetUserCallback(self.musicSequence, callBack, unsafeBitCast(self, UnsafeMutablePointer<Void>.self))
         var musicTrack: MusicTrack = nil
         MusicSequenceGetIndTrack(self.musicSequence, 0, &musicTrack)
         let userData: UnsafeMutablePointer<MusicEventUserData> = UnsafeMutablePointer.alloc(1)
@@ -228,15 +229,4 @@ public class Sequencer {
         print("MIDI Notify, messageId= \(notification.messageID.rawValue)")
     }
     
-}
-
-/// @see http://stackoverflow.com/questions/33294620/how-to-cast-self-to-unsafemutablepointervoid-type-in-swift
-func bridge<T : AnyObject>(obj : T) -> UnsafePointer<Void> {
-    return UnsafePointer(Unmanaged.passUnretained(obj).toOpaque())
-    // return unsafeAddressOf(obj) // ***
-}
-
-func bridge<T : AnyObject>(ptr : UnsafePointer<Void>) -> T {
-    return Unmanaged<T>.fromOpaque(COpaquePointer(ptr)).takeUnretainedValue()
-    // return unsafeBitCast(ptr, T.self) // ***
 }
