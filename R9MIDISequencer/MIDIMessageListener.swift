@@ -14,12 +14,12 @@ public protocol MIDIMessageListener {
     /// - parameter note:     Note number of activated note
     /// - parameter velocity: MIDI Velocity (0-127)
     /// - parameter channel:  MIDI Channel (1-16)
-    func midiNoteOn(note: UInt32, velocity: UInt32, channel: UInt32)
+    func midiNoteOn(_ note: UInt32, velocity: UInt32, channel: UInt32)
     
     /// Receive the MIDI note off event
     /// - parameter note:     Note number of activated note
     /// - parameter channel:  MIDI Channel (1-16)
-    func midiNoteOff(note: UInt32, channel: UInt32)
+    func midiNoteOff(_ note: UInt32, channel: UInt32)
     
     /// MIDI sequence did finish
     func midiSequenceDidFinish()
@@ -27,11 +27,11 @@ public protocol MIDIMessageListener {
 
 public extension MIDIMessageListener {
     
-    func midiNoteOn(note: UInt32, velocity: UInt32, channel: UInt32) {
+    func midiNoteOn(_ note: UInt32, velocity: UInt32, channel: UInt32) {
         print("Note on. Channel \(channel) note \(note) velocity \(velocity)")
     }
     
-    func midiNoteOff(note: UInt32, channel: UInt32) {
+    func midiNoteOff(_ note: UInt32, channel: UInt32) {
         print("Note off. Channel \(channel) note \(note)")
     }
     
