@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "R9MIDISequencer"
-  s.version      = "1.0.6"
+  s.version      = "1.0.7"
   s.summary      = "MIDI Sequencer for iOS on swift."
 
   # This description is used to generate tags and improve search results.
@@ -25,8 +25,7 @@ Pod::Spec.new do |s|
   #   * Try to keep it short, snappy and to the point.
   #   * Write the description between the DESC delimiters below.
   #   * Finally, don't worry about the indent, CocoaPods strips it!
-  s.description  = <<-DESC
-                   DESC
+  s.description  = "MIDI Sequencer for iOS on swift. try it."
 
   s.homepage     = "https://github.com/glassonion1/R9MIDISequencer"
   # s.screenshots  = "www.example.com/screenshots_1.gif", "www.example.com/screenshots_2.gif"
@@ -64,6 +63,9 @@ Pod::Spec.new do |s|
   #  the deployment target. You can optionally include the target after the platform.
   #
 
+  s.platform     = :ios, "9.0"
+  s.requires_arc = true
+  
   # s.platform     = :ios
   # s.platform     = :ios, "5.0"
 
@@ -91,7 +93,7 @@ Pod::Spec.new do |s|
   #  Not including the public_header_files will make all headers public.
   #
 
-  s.source_files  = "R9MIDISequencer/**/*.{h,m}"
+  s.source_files  = "R9MIDISequencer/**/*.{h,m,swift}"
   #s.exclude_files = "Classes/Exclude"
 
   # s.public_header_files = "Classes/**/*.h"
