@@ -67,6 +67,19 @@ class GameScene: SKScene, MIDIMessageListener {
 
 # Installation
 
+## CocoaPods
+
+You can install R9MIDISequencer via CocoaPods by adding it to your Podfile:
+
+```
+use_frameworks!
+
+source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, '9.0'
+
+pod 'R9MIDISequencer'
+```
+
 ## Carthage
 
 You can install R9MIDISequencer via [Carthage](https://github.com/Carthage/Carthage) by adding the following line to your Cartfile:
