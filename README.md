@@ -3,6 +3,7 @@
 [![Platform support](https://img.shields.io/badge/platform-ios-lightgrey.svg?style=flat-square)](https://github.com/glassonion1/R9MIDISequencer/blob/master/LICENSE.md)
 [![License MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/glassonion1/R9MIDISequencer/blob/master/LICENSE.md)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![CocoaPods Compatible](https://img.shields.io/cocoapods/v/ReSwift.svg?style=flat-square)](https://cocoapods.org/pods/R9MIDISequencer)
 
 MIDI Sequencer for iOS on swift.
 
@@ -66,6 +67,19 @@ class GameScene: SKScene, MIDIMessageListener {
 ```
 
 # Installation
+
+## CocoaPods
+
+You can install R9MIDISequencer via CocoaPods by adding it to your Podfile:
+
+```
+use_frameworks!
+
+source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, '9.0'
+
+pod 'R9MIDISequencer'
+```
 
 ## Carthage
 
