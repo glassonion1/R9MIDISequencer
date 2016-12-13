@@ -33,6 +33,10 @@ open class Sequencer {
     
     var endPoint = MIDIEndpointRef()
     
+    open var lengthInBeats: TimeInterval = 0.0
+    
+    open var lengthInSeconds: TimeInterval = 0.0
+    
     /// Array of all listeners
     var midiListeners: [MIDIMessageListener] = []
     
@@ -107,8 +111,15 @@ open class Sequencer {
         // MIDIファイルの読み込み
         do {
             try sequencer.load(from: midiFileUrl, options: .smfChannelsToTracks)
-        } catch {
-            print("Error load MIDI file")
+        } catch let error as NSError {
+            print(midiFileUrl)
+            print(error)
+            // Workaround
+            do {
+                try sequencer.load(from: midiFileUrl, options: .smfChannelsToTracks)
+            } catch {
+                print("reload error")
+            }
         }
         
         var result = OSStatus(noErr)
@@ -136,16 +147,19 @@ open class Sequencer {
         do {
             sequencer.prepareToPlay()
             try sequencer.start()
-        } catch {
-            print("Error play MIDI file")
+        } catch let error as NSError {
+            print(error)
         }
         
         // 曲の最後にコールバックを仕込む
         var musicLengthInBeats: TimeInterval = 0.0
+        var musicLengthInSeconds: TimeInterval = 0.0
         for track in sequencer.tracks {
             let lengthInBeats = track.lengthInBeats
+            let lengthInSeconds = track.lengthInSeconds
             if musicLengthInBeats < lengthInBeats {
                 musicLengthInBeats = lengthInBeats
+                musicLengthInSeconds = lengthInSeconds
             }
         }
 
@@ -153,17 +167,26 @@ open class Sequencer {
         var musicTrack: MusicTrack? = nil
         MusicSequenceGetIndTrack(self.musicSequence, 0, &musicTrack)
         let userData: UnsafeMutablePointer<MusicEventUserData> = UnsafeMutablePointer.allocate(capacity: 1)
-        MusicTrackNewUserEvent(musicTrack!, ceil(musicLengthInBeats), userData)
+        MusicTrackNewUserEvent(musicTrack!, ceil(musicLengthInBeats + sequencer.beats(forSeconds: 1)), userData)
+        
+        self.lengthInBeats = musicLengthInBeats
+        self.lengthInSeconds = musicLengthInSeconds
         
         // 1小節にかかる時間を返す
         return sequencer.beats(forSeconds: 60)
     }
     
+    @available(*, unavailable, renamed: "restart")
     open func replay() {
+        self.restart()
+    }
+    
+    open func restart() {
         do {
+            sequencer.prepareToPlay()
             try sequencer.start()
         } catch {
-            print("Error play MIDI file")
+            print("Error replay MIDI file")
         }
     }
     

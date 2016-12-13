@@ -11,6 +11,16 @@ import CoreMIDI
 
 open class Sampler {
     
+    // Sampler's volume
+    public var volume: Float {
+        get {
+            return self.samplerNode.volume
+        }
+        set(value) {
+            self.samplerNode.volume = value
+        }
+    }
+
     var audioEngine = AVAudioEngine()
     let samplerNode = AVAudioUnitSampler()
     let channelNumberForDrum: UInt8 = 10
