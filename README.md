@@ -20,9 +20,12 @@ Play note using the sampler:
 ```
 import R9MIDISequencer
 
-let url = NSBundle.mainBundle().URLForResource("Sound Font File",
-                                               withExtension: "sf2")
+let url = Bundle.main.url(forResource: “Sound Font File Name”,
+        withExtension: "sf2",
+        subdirectory: "Sounds")
+        
 let sampler = Sampler(bankURL: url!, program: 0, bankMSB: 0x79, bankLSB: 0, channelNumber: 1)
+
 // Play the note C
 sampler.startNoteWithNumber(36)
 // Play the note G
@@ -34,8 +37,8 @@ Play MIDI file using the Sequencer:
 ```
 let sequencer = Sequencer(sampler: sampler, enableLooping: true)
 
-let midiUrl = NSBundle.mainBundle().URLForResource("MIDI File",
-                                               withExtension: "mid")
+let midiUrl = Bundle.main.url(forResource: “MIDI File",
+        withExtension: "mid")
 sequencer.playWithMidiURL(midiUrl)
 ```
 
