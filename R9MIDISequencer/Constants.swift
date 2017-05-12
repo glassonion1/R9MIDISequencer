@@ -9,5 +9,9 @@
 import Foundation
 
 struct Constants {
-    static let midiDestinationName = "com.9revolution9.midi.destination.sequencer"
+    static let midiDestinationName: String = {
+        // アプリごとに名前を変える
+        let id = Bundle.main.bundleIdentifier ?? ""
+        return "\(id).destination"
+    }()
 }

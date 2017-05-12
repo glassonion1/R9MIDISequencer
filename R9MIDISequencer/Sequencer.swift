@@ -31,30 +31,37 @@ open class Sequencer {
     var sampler: Sampler
     var musicSequence: MusicSequence
     
-    var endPoint = MIDIEndpointRef()
+    var midiDestination = MIDIEndpointRef()
     
-    open var lengthInBeats: TimeInterval = 0.0
+    var lengthInBeats: TimeInterval = 0.0
     
-    open var lengthInSeconds: TimeInterval = 0.0
+    var lengthInSeconds: TimeInterval = 0.0
+    
+    // Beats Per Minute
+    var bpm: TimeInterval = 0.0
     
     /// Array of all listeners
     var midiListeners: [MIDIMessageListener] = []
     
-    open var currentPositionInSeconds: TimeInterval {
+    public var currentPositionInSeconds: TimeInterval {
         get {
             return sequencer.currentPositionInSeconds
         }
     }
     
-    open var currentPositionInBeats: TimeInterval {
+    public var currentPositionInBeats: TimeInterval {
         get {
             return sequencer.currentPositionInBeats
         }
     }
     
     /// Add a listener to the listeners
-    open func addListener(_ listener: MIDIMessageListener){
+    public func addListener(_ listener: MIDIMessageListener){
         midiListeners.append(listener)
+    }
+    
+    public func removeAllListeners(){
+        midiListeners.removeAll()
     }
     
     public init(sampler: Sampler, enableLooping: Bool) {
@@ -70,9 +77,10 @@ open class Sequencer {
         if result != OSStatus(noErr) {
             print("error creating client : \(result)")
         }*/
+        
         let destinationCount = MIDIGetNumberOfDestinations()
         print("DestinationCount: \(destinationCount)")
-        var found = false
+        
         for i in 0 ..< destinationCount {
             let destination: MIDIEndpointRef = MIDIGetDestination(i)
             var cfName: Unmanaged<CFString>?
@@ -84,15 +92,14 @@ open class Sequencer {
                 cfName!.toOpaque()).takeUnretainedValue() as CFString
             print(String(name))
             if String(name) == Constants.midiDestinationName {
-                found = true
+                MIDIEndpointDispose(destination)
                 break
             }
         }
-        if !found {
-            result = MIDIDestinationCreateWithBlock(self.sampler.midiClient, Constants.midiDestinationName as CFString, &endPoint, MIDIReadBlock)
-            if result != OSStatus(noErr) {
-                print("error creating destination : \(result)")
-            }
+        print(Constants.midiDestinationName)
+        result = MIDIDestinationCreateWithBlock(sampler.midiClient, Constants.midiDestinationName as CFString, &midiDestination, MIDIReadBlock)
+        if result != OSStatus(noErr) {
+            print("error creating destination : \(result)")
         }
     }
     
@@ -101,11 +108,15 @@ open class Sequencer {
     }
     
     deinit {
-        MIDIEndpointDispose(endPoint)
+        MIDIEndpointDispose(midiDestination)
     }
 
-    open func playWithMidiURL(_ midiFileUrl: URL) -> TimeInterval {
-        self.stop()
+    public func setVolume(_ volume: Float) {
+        sampler.volume = volume
+    }
+    
+    public func playWithMidiURL(_ midiFileUrl: URL) {
+        stop()
         sequencer.currentPositionInSeconds = 0
 
         // MIDIファイルの読み込み
@@ -122,12 +133,15 @@ open class Sequencer {
             }
         }
         
+        
+        // シーケンサにEndPointをセットする
         var result = OSStatus(noErr)
-        result = MusicSequenceSetMIDIEndpoint(self.musicSequence, self.endPoint);
+        result = MusicSequenceSetMIDIEndpoint(musicSequence, midiDestination);
         if result != OSStatus(noErr) {
             print("error creating endpoint : \(result)")
         }
-
+        
+        /*
         let destinationCount = MIDIGetNumberOfDestinations()
         for i in 0 ..< destinationCount {
             let src: MIDIEndpointRef = MIDIGetDestination(i)
@@ -136,7 +150,9 @@ open class Sequencer {
                 print("error creating endpoint : \(result)")
             }
         }
-
+        */
+        
+        
         if enableLooping {
             for track in sequencer.tracks {
                 track.isLoopingEnabled = true
@@ -163,25 +179,25 @@ open class Sequencer {
             }
         }
 
-        MusicSequenceSetUserCallback(self.musicSequence, callBack, unsafeBitCast(self, to: UnsafeMutableRawPointer.self))
+        MusicSequenceSetUserCallback(musicSequence, callBack, unsafeBitCast(self, to: UnsafeMutableRawPointer.self))
         var musicTrack: MusicTrack? = nil
-        MusicSequenceGetIndTrack(self.musicSequence, 0, &musicTrack)
+        MusicSequenceGetIndTrack(musicSequence, 0, &musicTrack)
         let userData: UnsafeMutablePointer<MusicEventUserData> = UnsafeMutablePointer.allocate(capacity: 1)
         MusicTrackNewUserEvent(musicTrack!, ceil(musicLengthInBeats + sequencer.beats(forSeconds: 1)), userData)
         
-        self.lengthInBeats = musicLengthInBeats
-        self.lengthInSeconds = musicLengthInSeconds
+        lengthInBeats = musicLengthInBeats
+        lengthInSeconds = musicLengthInSeconds
         
         // 1小節にかかる時間を返す
-        return sequencer.beats(forSeconds: 60)
+        bpm = sequencer.beats(forSeconds: 60)
     }
     
     @available(*, unavailable, renamed: "restart")
-    open func replay() {
-        self.restart()
+    public func replay() {
+        restart()
     }
     
-    open func restart() {
+    public func restart() {
         do {
             sequencer.prepareToPlay()
             try sequencer.start()
@@ -190,11 +206,11 @@ open class Sequencer {
         }
     }
     
-    open func stop() {
+    public func stop() {
         sequencer.stop()
     }
     
-    fileprivate func MIDIReadBlock(
+    private func MIDIReadBlock(
         _ packetList: UnsafePointer<MIDIPacketList>,
         srcConnRefCon: UnsafeMutableRawPointer?) -> Void {
             let packets = packetList.pointee
@@ -202,7 +218,7 @@ open class Sequencer {
             var packetPtr: UnsafeMutablePointer<MIDIPacket> = UnsafeMutablePointer.allocate(capacity: 1)
             packetPtr.initialize(to: packet)
             for _ in 0 ..< packets.numPackets {
-                self.handleMIDIMessage(packetPtr.pointee)
+                handleMIDIMessage(packetPtr.pointee)
                 packetPtr = MIDIPacketNext(packetPtr)
             }
             packetPtr.deinitialize()
@@ -210,7 +226,7 @@ open class Sequencer {
     
     /// @see https://github.com/genedelisa/Swift2MIDI/blob/master/Swift2MIDI/ViewController.swift
     /// - parameter packet: パケットデータ
-    fileprivate func handleMIDIMessage(_ packet: MIDIPacket) {
+    private func handleMIDIMessage(_ packet: MIDIPacket) {
         let status = UInt32(packet.data.0)
         let d1 = UInt32(packet.data.1)
         let d2 = UInt32(packet.data.2)
@@ -219,7 +235,7 @@ open class Sequencer {
         
         switch rawStatus {
         case 0x80, 0x90:
-            MusicDeviceMIDIEvent(self.sampler.samplerNode.audioUnit, status, d1, d2, 0)
+            MusicDeviceMIDIEvent(sampler.samplerNode.audioUnit, status, d1, d2, 0)
             for listener in midiListeners {
                 OperationQueue.main.addOperation({
                     if rawStatus == 0x90 {
@@ -250,11 +266,6 @@ open class Sequencer {
             
         }
         
-    }
-    
-    fileprivate func MIDINotifyBlock(_ midiNotification: UnsafePointer<MIDINotification>) {
-        let notification = midiNotification.pointee
-        print("MIDI Notify, messageId= \(notification.messageID.rawValue)")
     }
     
 }

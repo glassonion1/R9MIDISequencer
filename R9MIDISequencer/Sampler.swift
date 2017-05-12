@@ -14,10 +14,10 @@ open class Sampler {
     // Sampler's volume
     public var volume: Float {
         get {
-            return self.samplerNode.volume
+            return samplerNode.volume
         }
         set(value) {
-            self.samplerNode.volume = value
+            samplerNode.volume = value
         }
     }
 
@@ -35,16 +35,16 @@ open class Sampler {
     var midiClient = MIDIClientRef()
     var midiOutPort = MIDIPortRef()
     
-    fileprivate init() {
-        self.audioEngine.attach(self.samplerNode)
-        self.audioEngine.connect(self.samplerNode,
-            to: self.audioEngine.mainMixerNode,
-            format: self.samplerNode.outputFormat(forBus: 0))
-        
+    private init() {
+        audioEngine.attach(samplerNode)
+        audioEngine.connect(samplerNode,
+            to: audioEngine.mainMixerNode,
+            format: samplerNode.outputFormat(forBus: 0))
+        /*
         MIDINetworkSession.default().isEnabled = true
         MIDINetworkSession.default().connectionPolicy =
             MIDINetworkConnectionPolicy.anyone
-        
+        */
         var result = OSStatus(noErr)
         result = MIDIClientCreateWithBlock("MIDI Client" as CFString, &midiClient, MIDINotifyBlock)
         if result != OSStatus(noErr) {
@@ -72,8 +72,8 @@ open class Sampler {
         self.init()
         self.channelNumber = channelNumber
         do {
-            try self.samplerNode.loadAudioFiles(at: audioFiles)
-            try self.audioEngine.start()
+            try samplerNode.loadAudioFiles(at: audioFiles)
+            try audioEngine.start()
         } catch {
             
         }
@@ -95,37 +95,37 @@ open class Sampler {
     }
     
     deinit {
-        MIDIPortDispose(self.midiOutPort)
-        MIDIClientDispose(self.midiClient)
-        self.audioEngine.stop()
+        MIDIPortDispose(midiOutPort)
+        MIDIClientDispose(midiClient)
+        audioEngine.stop()
     }
     
-    fileprivate func startAudioEngine() {
+    private func startAudioEngine() {
         do {
-            try self.samplerNode.loadSoundBankInstrument(at: bankURL, program: program, bankMSB: bankMSB, bankLSB: bankLSB)
-            try self.audioEngine.start()
+            try samplerNode.loadSoundBankInstrument(at: bankURL, program: program, bankMSB: bankMSB, bankLSB: bankLSB)
+            try audioEngine.start()
         } catch {
     
         }
     }
     
-    open func startNoteWithNumber(_ noteNumber: UInt8) {
-        self.samplerNode.startNote(noteNumber, withVelocity: 127, onChannel: self.channelNumber)
+    public func startNoteWithNumber(_ noteNumber: UInt8) {
+        samplerNode.startNote(noteNumber, withVelocity: 127, onChannel: channelNumber)
         
-        let noteCommand: UInt8 = UInt8(0x90) + UInt8(self.channelNumber)
+        let noteCommand: UInt8 = UInt8(0x90) + UInt8(channelNumber)
         let message: [UInt8] = [noteCommand, UInt8(noteNumber), UInt8(127)]
-        self.sendMessage(message)
+        sendMessage(message)
     }
     
-    open func stopNoteWithNumber(_ noteNumber: UInt8) {
+    public func stopNoteWithNumber(_ noteNumber: UInt8) {
         // チャンネル設定 10のときは無視
-        if self.channelNumber != self.channelNumberForDrum {
-            self.samplerNode.stopNote(noteNumber, onChannel: self.channelNumber)
+        if channelNumber != channelNumberForDrum {
+            samplerNode.stopNote(noteNumber, onChannel: channelNumber)
         }
         
         let noteCommand: UInt8 = UInt8(0x90) + UInt8(channelNumber)
         let message: [UInt8] = [noteCommand, UInt8(noteNumber), UInt8(0)]
-        self.sendMessage(message)
+        sendMessage(message)
     }
     
     open func sendMessage(_ data: [UInt8]) {
