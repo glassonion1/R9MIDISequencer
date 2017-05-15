@@ -33,12 +33,12 @@ open class Sequencer {
     
     var midiDestination = MIDIEndpointRef()
     
-    var lengthInBeats: TimeInterval = 0.0
+    public private(set) var lengthInBeats: TimeInterval = 0.0
     
-    var lengthInSeconds: TimeInterval = 0.0
+    public private(set) var lengthInSeconds: TimeInterval = 0.0
     
     // Beats Per Minute
-    var bpm: TimeInterval = 0.0
+    public private(set) var bpm: TimeInterval = 0.0
     
     /// Array of all listeners
     var midiListeners: [MIDIMessageListener] = []
@@ -187,14 +187,8 @@ open class Sequencer {
         
         lengthInBeats = musicLengthInBeats
         lengthInSeconds = musicLengthInSeconds
-        
-        // 1小節にかかる時間を返す
+
         bpm = sequencer.beats(forSeconds: 60)
-    }
-    
-    @available(*, unavailable, renamed: "restart")
-    public func replay() {
-        restart()
     }
     
     public func restart() {
