@@ -27,7 +27,7 @@ public class MIDIRecoder {
         }
     }
     
-    public func prepare(bpm: TimeInterval = 110.0) {
+    public func prepare(bpm: TimeInterval = 60.0) {
         startTime = Date().timeIntervalSince1970
         var tempoTrack: MusicTrack?
         var status = MusicSequenceGetTempoTrack(musicSequence!, &tempoTrack)
@@ -49,7 +49,7 @@ public class MIDIRecoder {
             return
         }
         let duration = Date().timeIntervalSince1970 - noteStartTime
-        let beat = Date().timeIntervalSince1970 - duration
+        let beat = Date().timeIntervalSince1970 - startTime - duration
         var message = MIDINoteMessage(channel: 0,
                                       note: note,
                                       velocity: 100,
