@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol MIDIMessageListener {
+public protocol MIDIMessageListener: class {
     
     /// Receive the MIDI note on event
     /// - parameter note:     Note number of activated note

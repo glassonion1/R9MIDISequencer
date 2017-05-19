@@ -10,27 +10,24 @@ import AVFoundation
 import CoreMIDI
 import AudioToolbox
 
-
 open class Sequencer {
     
     let callBack: @convention(c) (UnsafeMutableRawPointer?, MusicSequence, MusicTrack, MusicTimeStamp, UnsafePointer<MusicEventUserData>, MusicTimeStamp, MusicTimeStamp) -> Void = {
         (obj, seq, mt, timestamp, userData, timestamp2, timestamp3) in
         // Cタイプ関数なのでselfを使えません
-        //let mySelf: Sequencer = bridge(obj)
-        let mySelf: Sequencer = unsafeBitCast(obj, to: Sequencer.self)
-        for listener in mySelf.midiListeners {
-            OperationQueue.main.addOperation({
-                listener.midiSequenceDidFinish()
-            })
-        }
+        unowned let mySelf: Sequencer = unsafeBitCast(obj, to: Sequencer.self)
+        MIDIEndpointDispose(mySelf.midiDestination)
+        OperationQueue.main.addOperation({ [weak delegate = mySelf.delegate] in
+            delegate?.midiSequenceDidFinish()
+        })
     }
     
     var enableLooping = false
     
     var sequencer: AVAudioSequencer
-    var sampler: Sampler
     var musicSequence: MusicSequence
     
+    var midiClient = MIDIClientRef()
     var midiDestination = MIDIEndpointRef()
     
     public private(set) var lengthInBeats: TimeInterval = 0.0
@@ -40,8 +37,7 @@ open class Sequencer {
     // Beats Per Minute
     public private(set) var bpm: TimeInterval = 0.0
     
-    /// Array of all listeners
-    var midiListeners: [MIDIMessageListener] = []
+    weak public var delegate: MIDIMessageListener?
     
     public var currentPositionInSeconds: TimeInterval {
         get {
@@ -55,64 +51,28 @@ open class Sequencer {
         }
     }
     
-    /// Add a listener to the listeners
-    public func addListener(_ listener: MIDIMessageListener){
-        midiListeners.append(listener)
-    }
-    
-    public func removeAllListeners(){
-        midiListeners.removeAll()
-    }
-    
-    public init(sampler: Sampler, enableLooping: Bool) {
-        self.sampler = sampler
-        self.enableLooping = enableLooping
-        self.sequencer = AVAudioSequencer(audioEngine: sampler.audioEngine)
-        self.musicSequence = sampler.audioEngine.musicSequence!
+    public init(audioEngine: AVAudioEngine, enableLooping: Bool) {
         
-        var result = OSStatus(noErr)
-        /*
-        var midiClient = MIDIClientRef()
-        result = MIDIClientCreateWithBlock("MIDI Client for Sequencer" as CFString, &midiClient, MIDINotifyBlock)
-        if result != OSStatus(noErr) {
-            print("error creating client : \(result)")
-        }*/
+        self.enableLooping = enableLooping
+        self.sequencer = AVAudioSequencer(audioEngine: audioEngine)
+        self.musicSequence = audioEngine.musicSequence!
         
         let destinationCount = MIDIGetNumberOfDestinations()
         print("DestinationCount: \(destinationCount)")
         
-        for i in 0 ..< destinationCount {
-            let destination: MIDIEndpointRef = MIDIGetDestination(i)
-            var cfName: Unmanaged<CFString>?
-            result = MIDIObjectGetStringProperty(destination, kMIDIPropertyName, &cfName)
-            if result != OSStatus(noErr) {
-                print("error get destination : \(result)")
-            }
-            let name = Unmanaged.fromOpaque(
-                cfName!.toOpaque()).takeUnretainedValue() as CFString
-            print(String(name))
-            if String(name) == Constants.midiDestinationName {
-                MIDIEndpointDispose(destination)
-                break
-            }
-        }
-        print(Constants.midiDestinationName)
-        result = MIDIDestinationCreateWithBlock(sampler.midiClient, Constants.midiDestinationName as CFString, &midiDestination, MIDIReadBlock)
+        var result = OSStatus(noErr)
+        result = MIDIClientCreateWithBlock("MIDI Client" as CFString, &midiClient, nil)
         if result != OSStatus(noErr) {
-            print("error creating destination : \(result)")
+            print("error creating client : \(result)")
         }
     }
     
-    public convenience init(sampler: Sampler) {
-        self.init(sampler: sampler, enableLooping: false)
+    public convenience init(audioEngine: AVAudioEngine) {
+        self.init(audioEngine: audioEngine, enableLooping: false)
     }
     
     deinit {
-        MIDIEndpointDispose(midiDestination)
-    }
-
-    public func setVolume(_ volume: Float) {
-        sampler.volume = volume
+        MIDIClientDispose(midiClient)
     }
     
     public func playWithMidiURL(_ midiFileUrl: URL) {
@@ -133,25 +93,18 @@ open class Sequencer {
             }
         }
         
+        createMIDIDestination()
         
         // シーケンサにEndPointをセットする
+        sequencer.tracks.forEach({ track in
+            track.destinationMIDIEndpoint = midiDestination
+        })
+        /*
         var result = OSStatus(noErr)
         result = MusicSequenceSetMIDIEndpoint(musicSequence, midiDestination);
         if result != OSStatus(noErr) {
             print("error creating endpoint : \(result)")
-        }
-        
-        /*
-        let destinationCount = MIDIGetNumberOfDestinations()
-        for i in 0 ..< destinationCount {
-            let src: MIDIEndpointRef = MIDIGetDestination(i)
-            result = MusicSequenceSetMIDIEndpoint(self.musicSequence, src);
-            if result != OSStatus(noErr) {
-                print("error creating endpoint : \(result)")
-            }
-        }
-        */
-        
+        }*/
         
         if enableLooping {
             for track in sequencer.tracks {
@@ -178,7 +131,7 @@ open class Sequencer {
                 musicLengthInSeconds = lengthInSeconds
             }
         }
-
+        
         MusicSequenceSetUserCallback(musicSequence, callBack, unsafeBitCast(self, to: UnsafeMutableRawPointer.self))
         var musicTrack: MusicTrack? = nil
         MusicSequenceGetIndTrack(musicSequence, 0, &musicTrack)
@@ -187,7 +140,7 @@ open class Sequencer {
         
         lengthInBeats = musicLengthInBeats
         lengthInSeconds = musicLengthInSeconds
-
+        
         bpm = sequencer.beats(forSeconds: 60)
     }
     
@@ -204,9 +157,54 @@ open class Sequencer {
         sequencer.stop()
     }
     
-    private func MIDIReadBlock(
-        _ packetList: UnsafePointer<MIDIPacketList>,
-        srcConnRefCon: UnsafeMutableRawPointer?) -> Void {
+    public func dispose() {
+        if sequencer.isPlaying {
+            sequencer.stop()
+        }
+        MIDIEndpointDispose(midiDestination)
+    }
+    
+    private func createMIDIDestination() {
+        /// This block will be method then memory leak
+        /// @see https://github.com/genedelisa/Swift2MIDI/blob/master/Swift2MIDI/ViewController.swift
+        /// - parameter packet: パケットデータ
+        let handleMIDIMessage = { [weak self] (packet: MIDIPacket) in
+            guard let localSelf = self else {
+                return
+            }
+            let status = UInt32(packet.data.0)
+            let d1 = UInt32(packet.data.1)
+            let d2 = UInt32(packet.data.2)
+            let rawStatus = status & 0xF0 // without channel
+            let channel = UInt32(status & 0x0F)
+            
+            switch rawStatus {
+            case 0x80, 0x90:
+                OperationQueue.main.addOperation({ [weak delegate = localSelf.delegate] in
+                    if rawStatus == 0x90 {
+                        delegate?.midiNoteOn(d1, velocity: d2, channel: channel)
+                    } else {
+                        delegate?.midiNoteOff(d1, channel: channel)
+                    }
+                })
+            case 0xA0:
+                print("Polyphonic Key Pressure (Aftertouch). Channel \(channel) note \(d1) pressure \(d2)")
+            case 0xB0:
+                print("Control Change. Channel \(channel) controller \(d1) value \(d2)")
+            case 0xC0:
+                print("Program Change. Channel \(channel) program \(d1)")
+            case 0xD0:
+                print("Channel Pressure (Aftertouch). Channel \(channel) pressure \(d1)")
+            case 0xE0:
+                print("Pitch Bend Change. Channel \(channel) lsb \(d1) msb \(d2)")
+            default:
+                print("Unhandled message \(status)")
+            }
+        }
+        
+        var result = OSStatus(noErr)
+        let name = Constants.midiDestinationName as CFString
+        result = MIDIDestinationCreateWithBlock(midiClient, name, &midiDestination) { (packetList, srcConnRefCon) in
             let packets = packetList.pointee
             let packet: MIDIPacket = packets.packet
             var packetPtr: UnsafeMutablePointer<MIDIPacket> = UnsafeMutablePointer.allocate(capacity: 1)
@@ -216,50 +214,10 @@ open class Sequencer {
                 packetPtr = MIDIPacketNext(packetPtr)
             }
             packetPtr.deinitialize()
-    }
-    
-    /// @see https://github.com/genedelisa/Swift2MIDI/blob/master/Swift2MIDI/ViewController.swift
-    /// - parameter packet: パケットデータ
-    private func handleMIDIMessage(_ packet: MIDIPacket) {
-        let status = UInt32(packet.data.0)
-        let d1 = UInt32(packet.data.1)
-        let d2 = UInt32(packet.data.2)
-        let rawStatus = status & 0xF0 // without channel
-        let channel = UInt32(status & 0x0F)
-        
-        switch rawStatus {
-        case 0x80, 0x90:
-            MusicDeviceMIDIEvent(sampler.samplerNode.audioUnit, status, d1, d2, 0)
-            for listener in midiListeners {
-                OperationQueue.main.addOperation({
-                    if rawStatus == 0x90 {
-                        listener.midiNoteOn(d1, velocity: d2, channel: channel)
-                    } else {
-                        listener.midiNoteOff(d1, channel: channel)
-                    }
-                })
-            }
-            
-        case 0xA0:
-            print("Polyphonic Key Pressure (Aftertouch). Channel \(channel) note \(d1) pressure \(d2)")
-            
-        case 0xB0:
-            print("Control Change. Channel \(channel) controller \(d1) value \(d2)")
-            
-        case 0xC0:
-            print("Program Change. Channel \(channel) program \(d1)")
-            
-        case 0xD0:
-            print("Channel Pressure (Aftertouch). Channel \(channel) pressure \(d1)")
-            
-        case 0xE0:
-            print("Pitch Bend Change. Channel \(channel) lsb \(d1) msb \(d2)")
-            
-        default:
-            print("Unhandled message \(status)")
-            
         }
-        
+        if result != OSStatus(noErr) {
+            print("error creating destination : \(result)")
+        }
     }
-    
+
 }

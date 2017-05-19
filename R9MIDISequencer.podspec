@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "R9MIDISequencer"
-  s.version      = "1.2.0"
+  s.version      = "1.2.1"
   s.summary      = "MIDI Sequencer for iOS on swift."
 
   # This description is used to generate tags and improve search results.

@@ -21,7 +21,7 @@ open class Sampler {
         }
     }
 
-    var audioEngine = AVAudioEngine()
+    public var audioEngine = AVAudioEngine()
     let samplerNode = AVAudioUnitSampler()
     let channelNumberForDrum: UInt8 = 10
     
@@ -40,11 +40,7 @@ open class Sampler {
         audioEngine.connect(samplerNode,
             to: audioEngine.mainMixerNode,
             format: samplerNode.outputFormat(forBus: 0))
-        /*
-        MIDINetworkSession.default().isEnabled = true
-        MIDINetworkSession.default().connectionPolicy =
-            MIDINetworkConnectionPolicy.anyone
-        */
+
         var result = OSStatus(noErr)
         result = MIDIClientCreateWithBlock("MIDI Client" as CFString, &midiClient, MIDINotifyBlock)
         if result != OSStatus(noErr) {
