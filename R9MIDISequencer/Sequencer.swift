@@ -16,7 +16,6 @@ open class Sequencer {
         (obj, seq, mt, timestamp, userData, timestamp2, timestamp3) in
         // Cタイプ関数なのでselfを使えません
         unowned let mySelf: Sequencer = unsafeBitCast(obj, to: Sequencer.self)
-        MIDIEndpointDispose(mySelf.midiDestination)
         OperationQueue.main.addOperation({ [weak delegate = mySelf.delegate] in
             delegate?.midiSequenceDidFinish()
         })
@@ -24,8 +23,8 @@ open class Sequencer {
     
     var enableLooping = false
     
-    var sequencer: AVAudioSequencer
-    var musicSequence: MusicSequence
+    var musicSequence: MusicSequence?
+    var musicPlayer: MusicPlayer?
     
     var midiClient = MIDIClientRef()
     var midiDestination = MIDIEndpointRef()
@@ -39,129 +38,134 @@ open class Sequencer {
     
     weak public var delegate: MIDIMessageListener?
     
+    
     public var currentPositionInSeconds: TimeInterval {
         get {
-            return sequencer.currentPositionInSeconds
+            guard let player = musicPlayer else {
+                return 0.0
+            }
+            var time: MusicTimeStamp = 0.0
+            MusicPlayerGetTime(player, &time)
+            return time
         }
     }
     
-    public var currentPositionInBeats: TimeInterval {
-        get {
-            return sequencer.currentPositionInBeats
-        }
-    }
-    
-    public init(audioEngine: AVAudioEngine, enableLooping: Bool) {
+    public init(enableLooping: Bool) {
         
         self.enableLooping = enableLooping
-        self.sequencer = AVAudioSequencer(audioEngine: audioEngine)
-        self.musicSequence = audioEngine.musicSequence!
+        
+        var result = OSStatus(noErr)
+        result = NewMusicSequence(&musicSequence)
+        if result != OSStatus(noErr) {
+            print("error creating sequence : \(result)")
+        }
         
         let destinationCount = MIDIGetNumberOfDestinations()
         print("DestinationCount: \(destinationCount)")
         
-        var result = OSStatus(noErr)
-        result = MIDIClientCreateWithBlock("MIDI Client" as CFString, &midiClient, nil)
+        result = MIDIClientCreateWithBlock("MIDI Client" as CFString, &midiClient) { midiNotification in
+            print(midiNotification)
+        }
         if result != OSStatus(noErr) {
             print("error creating client : \(result)")
         }
+        
+        Thread.sleep(forTimeInterval: 0.2) // スリープを入れないとDestinationのコールバックが呼ばれない
+        createMIDIDestination()
     }
     
-    public convenience init(audioEngine: AVAudioEngine) {
-        self.init(audioEngine: audioEngine, enableLooping: false)
+    public convenience init() {
+        self.init(enableLooping: false)
     }
     
     deinit {
+        stop()
+        if let seq = musicSequence {
+            DisposeMusicSequence(seq)
+        }
+        MIDIEndpointDispose(midiDestination)
         MIDIClientDispose(midiClient)
     }
     
     public func playWithMidiURL(_ midiFileUrl: URL) {
         stop()
-        sequencer.currentPositionInSeconds = 0
 
-        // MIDIファイルの読み込み
-        do {
-            try sequencer.load(from: midiFileUrl, options: .smfChannelsToTracks)
-        } catch let error as NSError {
-            print(midiFileUrl)
-            print(error)
-            // Workaround
-            do {
-                try sequencer.load(from: midiFileUrl, options: .smfChannelsToTracks)
-            } catch {
-                print("reload error")
-            }
+        guard let sequence = musicSequence else {
+            return
         }
         
-        createMIDIDestination()
+        var result = OSStatus(noErr)
+        result = NewMusicPlayer(&musicPlayer)
+        if result != OSStatus(noErr) {
+            print("error creating player : \(result)")
+            return
+        }
+        
+        // MIDIファイルの読み込み
+        MusicSequenceFileLoad(sequence, midiFileUrl as CFURL, .midiType, MusicSequenceLoadFlags.smf_ChannelsToTracks)
+        
+        // bpmの取得
+        MusicSequenceGetBeatsForSeconds(sequence, 60, &bpm)
         
         // シーケンサにEndPointをセットする
-        sequencer.tracks.forEach({ track in
-            track.destinationMIDIEndpoint = midiDestination
-        })
-        /*
-        var result = OSStatus(noErr)
-        result = MusicSequenceSetMIDIEndpoint(musicSequence, midiDestination);
+        // trackが決まってからセットしないとだめ
+        result = MusicSequenceSetMIDIEndpoint(sequence, midiDestination);
         if result != OSStatus(noErr) {
             print("error creating endpoint : \(result)")
-        }*/
+        }
         
-        if enableLooping {
-            for track in sequencer.tracks {
-                track.isLoopingEnabled = true
-                track.numberOfLoops = AVMusicTrackLoopCount.forever.rawValue
+        var musicTrack: MusicTrack? = nil
+        var sequenceLength: MusicTimeStamp = 0
+        var tracks: UInt32 = 0
+        MusicSequenceGetTrackCount(sequence, &tracks)
+        for i in 0 ..< tracks {
+            
+            if enableLooping {
+                var loopInfo = MusicTrackLoopInfo(loopDuration: 1, numberOfLoops: 0)
+                let lisize: UInt32 = 0
+                let status = MusicTrackSetProperty(musicTrack!, kSequenceTrackProperty_LoopInfo, &loopInfo, lisize )
+                if status != OSStatus(noErr) {
+                    print("Error setting loopinfo on track \(status)")
+                }
+            }
+            
+            var trackLength: MusicTimeStamp = 0
+            var trackLengthSize: UInt32 = 0
+            
+            MusicSequenceGetIndTrack(sequence, i, &musicTrack)
+            MusicTrackGetProperty(musicTrack!, kSequenceTrackProperty_TrackLength, &trackLength, &trackLengthSize)
+            
+            if sequenceLength < trackLength {
+                sequenceLength = trackLength
             }
         }
         
-        do {
-            sequencer.prepareToPlay()
-            try sequencer.start()
-        } catch let error as NSError {
-            print(error)
-        }
+        lengthInSeconds = sequenceLength
         
         // 曲の最後にコールバックを仕込む
-        var musicLengthInBeats: TimeInterval = 0.0
-        var musicLengthInSeconds: TimeInterval = 0.0
-        for track in sequencer.tracks {
-            let lengthInBeats = track.lengthInBeats
-            let lengthInSeconds = track.lengthInSeconds
-            if musicLengthInBeats < lengthInBeats {
-                musicLengthInBeats = lengthInBeats
-                musicLengthInSeconds = lengthInSeconds
-            }
-        }
+        MusicSequenceSetUserCallback(sequence, callBack, unsafeBitCast(self, to: UnsafeMutableRawPointer.self))
         
-        MusicSequenceSetUserCallback(musicSequence, callBack, unsafeBitCast(self, to: UnsafeMutableRawPointer.self))
-        var musicTrack: MusicTrack? = nil
-        MusicSequenceGetIndTrack(musicSequence, 0, &musicTrack)
         let userData: UnsafeMutablePointer<MusicEventUserData> = UnsafeMutablePointer.allocate(capacity: 1)
-        MusicTrackNewUserEvent(musicTrack!, ceil(musicLengthInBeats + sequencer.beats(forSeconds: 1)), userData)
+        MusicTrackNewUserEvent(musicTrack!, sequenceLength, userData)
         
-        lengthInBeats = musicLengthInBeats
-        lengthInSeconds = musicLengthInSeconds
-        
-        bpm = sequencer.beats(forSeconds: 60)
+        // play
+        MusicPlayerSetSequence(musicPlayer!, sequence)
+        MusicPlayerPreroll(musicPlayer!)
+        MusicPlayerStart(musicPlayer!)
     }
     
     public func restart() {
-        do {
-            sequencer.prepareToPlay()
-            try sequencer.start()
-        } catch {
-            print("Error replay MIDI file")
+        if let player = musicPlayer {
+            MusicPlayerPreroll(player)
+            MusicPlayerStart(player)
         }
     }
     
     public func stop() {
-        sequencer.stop()
-    }
-    
-    public func dispose() {
-        if sequencer.isPlaying {
-            sequencer.stop()
+        if let player = musicPlayer {
+            MusicPlayerStop(player)
+            DisposeMusicPlayer(player)
         }
-        MIDIEndpointDispose(midiDestination)
     }
     
     private func createMIDIDestination() {
