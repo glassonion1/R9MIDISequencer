@@ -14,4 +14,9 @@ struct Constants {
         let id = Bundle.main.bundleIdentifier ?? ""
         return "\(id).destination"
     }()
+    static let midiRecorderDestinationName: String = {
+        // アプリごとに名前を変える
+        let id = Bundle.main.bundleIdentifier ?? ""
+        return "\(id).recorder.destination"
+    }()
 }

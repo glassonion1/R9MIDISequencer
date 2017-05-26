@@ -105,22 +105,38 @@ open class Sampler {
         }
     }
     
-    public func startNoteWithNumber(_ noteNumber: UInt8) {
-        samplerNode.startNote(noteNumber, withVelocity: 127, onChannel: channelNumber)
+    public func turnOnSustain() {
+        samplerNode.sendController(64, withValue: 127, onChannel: channelNumber)
         
-        let noteCommand: UInt8 = UInt8(0x90) + UInt8(channelNumber)
-        let message: [UInt8] = [noteCommand, UInt8(noteNumber), UInt8(127)]
+        let controllerCommand: UInt8 = UInt8(0xB0) + channelNumber
+        let message: [UInt8] = [controllerCommand, 64, UInt8(127)]
         sendMessage(message)
     }
     
-    public func stopNoteWithNumber(_ noteNumber: UInt8) {
+    public func turnOffSustain() {
+        samplerNode.sendController(64, withValue: 0, onChannel: channelNumber)
+        
+        let controllerCommand: UInt8 = UInt8(0xB0) + channelNumber
+        let message: [UInt8] = [controllerCommand, 64, UInt8(0)]
+        sendMessage(message)
+    }
+    
+    public func startNote(_ note: UInt8, withVelocity velocity: UInt8 = 100) {
+        samplerNode.startNote(note, withVelocity: velocity, onChannel: channelNumber)
+        
+        let noteCommand: UInt8 = UInt8(0x90) + channelNumber
+        let message: [UInt8] = [noteCommand, note, velocity]
+        sendMessage(message)
+    }
+    
+    public func stopNote(_ note: UInt8) {
         // チャンネル設定 10のときは無視
         if channelNumber != channelNumberForDrum {
-            samplerNode.stopNote(noteNumber, onChannel: channelNumber)
+            samplerNode.stopNote(note, onChannel: channelNumber)
         }
         
-        let noteCommand: UInt8 = UInt8(0x90) + UInt8(channelNumber)
-        let message: [UInt8] = [noteCommand, UInt8(noteNumber), UInt8(0)]
+        let noteCommand: UInt8 = UInt8(0x90) + channelNumber
+        let message: [UInt8] = [noteCommand, note, UInt8(0)]
         sendMessage(message)
     }
     

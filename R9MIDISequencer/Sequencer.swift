@@ -16,8 +16,8 @@ open class Sequencer {
         (obj, seq, mt, timestamp, userData, timestamp2, timestamp3) in
         // Cタイプ関数なのでselfを使えません
         unowned let mySelf: Sequencer = unsafeBitCast(obj, to: Sequencer.self)
-        OperationQueue.main.addOperation({ [weak delegate = mySelf.delegate] in
-            delegate?.midiSequenceDidFinish()
+        OperationQueue.main.addOperation({
+            mySelf.delegate?.midiSequenceDidFinish()
         })
     }
     
@@ -87,17 +87,11 @@ open class Sequencer {
         MIDIClientDispose(midiClient)
     }
     
-    public func playWithMidiURL(_ midiFileUrl: URL) {
+    public func loadMIDIURL(_ midiFileUrl: URL) {
+        // 再生中だったら止める
         stop()
-
-        guard let sequence = musicSequence else {
-            return
-        }
         
-        var result = OSStatus(noErr)
-        result = NewMusicPlayer(&musicPlayer)
-        if result != OSStatus(noErr) {
-            print("error creating player : \(result)")
+        guard let sequence = musicSequence else {
             return
         }
         
@@ -109,7 +103,7 @@ open class Sequencer {
         
         // シーケンサにEndPointをセットする
         // trackが決まってからセットしないとだめ
-        result = MusicSequenceSetMIDIEndpoint(sequence, midiDestination);
+        var result = MusicSequenceSetMIDIEndpoint(sequence, midiDestination);
         if result != OSStatus(noErr) {
             print("error creating endpoint : \(result)")
         }
@@ -143,15 +137,35 @@ open class Sequencer {
         lengthInSeconds = sequenceLength
         
         // 曲の最後にコールバックを仕込む
-        MusicSequenceSetUserCallback(sequence, callBack, unsafeBitCast(self, to: UnsafeMutableRawPointer.self))
+        result = MusicSequenceSetUserCallback(sequence, callBack, unsafeBitCast(self, to: UnsafeMutableRawPointer.self))
+        if result != OSStatus(noErr) {
+            print("error set user callback : \(result)")
+        }
         
         let userData: UnsafeMutablePointer<MusicEventUserData> = UnsafeMutablePointer.allocate(capacity: 1)
-        MusicTrackNewUserEvent(musicTrack!, sequenceLength, userData)
-        
-        // play
+        result = MusicTrackNewUserEvent(musicTrack!, sequenceLength, userData)
+        if result != OSStatus(noErr) {
+            print("error new user event : \(result)")
+        }
+    }
+    
+    public func play() {
+        guard let sequence = musicSequence else {
+            return
+        }
+        let result = NewMusicPlayer(&musicPlayer)
+        if result != OSStatus(noErr) {
+            print("error creating player : \(result)")
+            return
+        }
         MusicPlayerSetSequence(musicPlayer!, sequence)
         MusicPlayerPreroll(musicPlayer!)
         MusicPlayerStart(musicPlayer!)
+    }
+    
+    public func playWithMidiURL(_ midiFileUrl: URL) {
+        loadMIDIURL(midiFileUrl)
+        play()
     }
     
     public func restart() {
@@ -168,6 +182,34 @@ open class Sequencer {
         }
     }
     
+    public func addMIDINoteEvent(trackNumber: UInt32,
+                    noteNumber: UInt8,
+                    velocity: UInt8,
+                    position: MusicTimeStamp,
+                    duration: Float32,
+                    channel: UInt8 = 0) {
+        guard let sequence = musicSequence else {
+            return
+        }
+        var musicTrack: MusicTrack? = nil
+        var result = MusicSequenceGetIndTrack(sequence, trackNumber, &musicTrack)
+        if result != OSStatus(noErr) {
+            print("error get track index: \(trackNumber) \(result)")
+        }
+        guard let track = musicTrack else {
+            return
+        }
+        var message = MIDINoteMessage(channel: channel,
+                                      note: noteNumber,
+                                      velocity: velocity,
+                                      releaseVelocity: 0,
+                                      duration: duration)
+        result = MusicTrackNewMIDINoteEvent(track, position, &message)
+        if result != OSStatus(noErr) {
+            print("error creating midi note event \(result)")
+        }
+    }
+    
     private func createMIDIDestination() {
         /// This block will be method then memory leak
         /// @see https://github.com/genedelisa/Swift2MIDI/blob/master/Swift2MIDI/ViewController.swift
@@ -176,19 +218,19 @@ open class Sequencer {
             guard let localSelf = self else {
                 return
             }
-            let status = UInt32(packet.data.0)
-            let d1 = UInt32(packet.data.1)
-            let d2 = UInt32(packet.data.2)
+            let status = UInt8(packet.data.0)
+            let d1 = UInt8(packet.data.1)
+            let d2 = UInt8(packet.data.2)
             let rawStatus = status & 0xF0 // without channel
-            let channel = UInt32(status & 0x0F)
+            let channel = UInt8(status & 0x0F)
             
             switch rawStatus {
             case 0x80, 0x90:
-                OperationQueue.main.addOperation({ [weak delegate = localSelf.delegate] in
+                OperationQueue.main.addOperation({
                     if rawStatus == 0x90 {
-                        delegate?.midiNoteOn(d1, velocity: d2, channel: channel)
+                        localSelf.delegate?.midiNoteOn(d1, velocity: d2, channel: channel)
                     } else {
-                        delegate?.midiNoteOff(d1, channel: channel)
+                        localSelf.delegate?.midiNoteOff(d1, channel: channel)
                     }
                 })
             case 0xA0:

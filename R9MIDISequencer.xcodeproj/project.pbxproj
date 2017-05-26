@@ -14,6 +14,7 @@
 		004F85B01C7F02030062E56E /* Sampler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 004F85AC1C7F02030062E56E /* Sampler.swift */; };
 		004F85B11C7F02030062E56E /* Sequencer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 004F85AD1C7F02030062E56E /* Sequencer.swift */; };
 		004F85C91C80281C0062E56E /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 004F85C81C80281C0062E56E /* Constants.swift */; };
+		6E313C871ED58EE900FE6A93 /* Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E313C861ED58EE900FE6A93 /* Recorder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,6 +38,7 @@
 		004F85AC1C7F02030062E56E /* Sampler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sampler.swift; sourceTree = "<group>"; };
 		004F85AD1C7F02030062E56E /* Sequencer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sequencer.swift; sourceTree = "<group>"; };
 		004F85C81C80281C0062E56E /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		6E313C861ED58EE900FE6A93 /* Recorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Recorder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +81,7 @@
 		004F85921C7F018E0062E56E /* R9MIDISequencer */ = {
 			isa = PBXGroup;
 			children = (
+				6E313C861ED58EE900FE6A93 /* Recorder.swift */,
 				004F85C81C80281C0062E56E /* Constants.swift */,
 				004F85AC1C7F02030062E56E /* Sampler.swift */,
 				004F85AD1C7F02030062E56E /* Sequencer.swift */,
@@ -212,6 +215,7 @@
 				004F85AE1C7F02030062E56E /* MIDIMessageListener.swift in Sources */,
 				004F85B11C7F02030062E56E /* Sequencer.swift in Sources */,
 				004F85C91C80281C0062E56E /* Constants.swift in Sources */,
+				6E313C871ED58EE900FE6A93 /* Recorder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
