@@ -18,6 +18,9 @@ open class Sequencer {
         unowned let mySelf: Sequencer = unsafeBitCast(obj, to: Sequencer.self)
         OperationQueue.main.addOperation({
             mySelf.delegate?.midiSequenceDidFinish()
+            if let player = mySelf.musicPlayer {
+                MusicPlayerSetTime(player, 0)
+            }
         })
     }
     
@@ -28,8 +31,6 @@ open class Sequencer {
     
     var midiClient = MIDIClientRef()
     var midiDestination = MIDIEndpointRef()
-    
-    public private(set) var lengthInBeats: TimeInterval = 0.0
     
     public private(set) var lengthInSeconds: TimeInterval = 0.0
     
@@ -60,6 +61,12 @@ open class Sequencer {
             print("error creating sequence : \(result)")
         }
         
+        result = NewMusicPlayer(&musicPlayer)
+        if result != OSStatus(noErr) {
+            print("error creating player : \(result)")
+            return
+        }
+        
         let destinationCount = MIDIGetNumberOfDestinations()
         print("DestinationCount: \(destinationCount)")
         
@@ -80,6 +87,9 @@ open class Sequencer {
     
     deinit {
         stop()
+        if let player = musicPlayer {
+            DisposeMusicPlayer(player)
+        }
         if let seq = musicSequence {
             DisposeMusicSequence(seq)
         }
@@ -95,8 +105,14 @@ open class Sequencer {
             return
         }
         
+        guard let player = musicPlayer else {
+            return
+        }
+        
         // MIDIファイルの読み込み
         MusicSequenceFileLoad(sequence, midiFileUrl as CFURL, .midiType, MusicSequenceLoadFlags.smf_ChannelsToTracks)
+        
+        MusicPlayerSetSequence(player, sequence)
         
         // bpmの取得
         MusicSequenceGetBeatsForSeconds(sequence, 60, &bpm)
@@ -150,35 +166,21 @@ open class Sequencer {
     }
     
     public func play() {
-        guard let sequence = musicSequence else {
+        guard let player = musicPlayer else {
             return
         }
-        let result = NewMusicPlayer(&musicPlayer)
-        if result != OSStatus(noErr) {
-            print("error creating player : \(result)")
-            return
-        }
-        MusicPlayerSetSequence(musicPlayer!, sequence)
-        MusicPlayerPreroll(musicPlayer!)
-        MusicPlayerStart(musicPlayer!)
+        MusicPlayerPreroll(player)
+        MusicPlayerStart(player)
     }
     
-    public func playWithMidiURL(_ midiFileUrl: URL) {
+    public func playWithMIDIURL(_ midiFileUrl: URL) {
         loadMIDIURL(midiFileUrl)
         play()
-    }
-    
-    public func restart() {
-        if let player = musicPlayer {
-            MusicPlayerPreroll(player)
-            MusicPlayerStart(player)
-        }
     }
     
     public func stop() {
         if let player = musicPlayer {
             MusicPlayerStop(player)
-            DisposeMusicPlayer(player)
         }
     }
     
@@ -226,11 +228,12 @@ open class Sequencer {
             
             switch rawStatus {
             case 0x80, 0x90:
-                OperationQueue.main.addOperation({
+                // weak delegateにしないとメモリリークする
+                OperationQueue.main.addOperation({ [weak delegate = localSelf.delegate] in
                     if rawStatus == 0x90 {
-                        localSelf.delegate?.midiNoteOn(d1, velocity: d2, channel: channel)
+                        delegate?.midiNoteOn(d1, velocity: d2, channel: channel)
                     } else {
-                        localSelf.delegate?.midiNoteOff(d1, channel: channel)
+                        delegate?.midiNoteOff(d1, channel: channel)
                     }
                 })
             case 0xA0:
