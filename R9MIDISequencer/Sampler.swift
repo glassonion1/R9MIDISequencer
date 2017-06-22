@@ -25,17 +25,16 @@ open class Sampler {
     let samplerNode = AVAudioUnitSampler()
     let channelNumberForDrum: UInt8 = 10
     
-    var bankURL: URL = URL(fileURLWithPath: Bundle.main.bundlePath)
-    var program: UInt8 = 0;
-    var bankMSB: UInt8 = 0;
-    var bankLSB: UInt8 = 0;
-    var channelNumber: UInt8 = 0;
+    let channelNumber: UInt8
     
     /// MIDI Client Reference
     var midiClient = MIDIClientRef()
     var midiOutPort = MIDIPortRef()
     
-    private init() {
+    // ドラムの場合はチャンネル10を指定すること
+    public init(channelNumber: UInt8) {
+        self.channelNumber = channelNumber
+        
         audioEngine.attach(samplerNode)
         audioEngine.connect(samplerNode,
             to: audioEngine.mainMixerNode,
@@ -52,42 +51,18 @@ open class Sampler {
         }
         
         let center = NotificationCenter.default
-        center.addObserver(forName: NSNotification.Name.AVAudioEngineConfigurationChange, object: nil, queue: OperationQueue.main) {(notification: Notification) in
-            if !self.audioEngine.isRunning {
-                self.startAudioEngine()
+        center.addObserver(forName: NSNotification.Name.AVAudioEngineConfigurationChange, object: nil, queue: OperationQueue.main) { [weak self] (notification: Notification) in
+            guard let localSelf = self else { return }
+            if !localSelf.audioEngine.isRunning {
+                localSelf.startAudioEngine()
             }
         }
-    }
-    
-    public convenience init(audioFiles: [URL]) {
-        self.init(audioFiles: audioFiles, channelNumber: 0)
-    }
-    
-    // ドラムの場合はチャンネル10を指定すること
-    public convenience init(audioFiles: [URL], channelNumber: UInt8) {
-        self.init()
-        self.channelNumber = channelNumber
-        do {
-            try samplerNode.loadAudioFiles(at: audioFiles)
-            try audioEngine.start()
-        } catch {
-            
-        }
-    }
-    
-    public convenience init(bankURL: URL, program: UInt8, bankMSB: UInt8, bankLSB: UInt8) {
-        self.init(bankURL: bankURL, program: program, bankMSB: bankMSB, bankLSB: bankLSB, channelNumber: 0)
-    }
-    
-    // ドラムの場合はチャンネル10を指定すること
-    public convenience init(bankURL: URL, program: UInt8, bankMSB: UInt8, bankLSB: UInt8, channelNumber: UInt8) {
-        self.init()
-        self.bankURL = bankURL
-        self.program = program
-        self.bankMSB = bankMSB
-        self.bankLSB = bankLSB
-        self.channelNumber = channelNumber
+        
         startAudioEngine()
+    }
+    
+    public convenience init() {
+        self.init(channelNumber: 0)
     }
     
     deinit {
@@ -96,13 +71,46 @@ open class Sampler {
         audioEngine.stop()
     }
     
-    private func startAudioEngine() {
+    public func startAudioEngine() {
+        audioEngine.prepare()
         do {
-            try samplerNode.loadSoundBankInstrument(at: bankURL, program: program, bankMSB: bankMSB, bankLSB: bankLSB)
             try audioEngine.start()
         } catch {
     
         }
+    }
+    
+    // If your bank has only one instrument, it seems likely that it is at program 0.
+    public func loadSoundBankInstrument(at bankURL: URL, program: UInt8, bankMSB: UInt8, bankLSB: UInt8) {
+        do {
+            try samplerNode.loadSoundBankInstrument(at: bankURL, program: program, bankMSB: bankMSB, bankLSB: bankLSB)
+        } catch {
+            print("error load SoundBank")
+        }
+    }
+    
+    public func loadMelodicBankInstrument(at bankURL: URL) {
+        let msb = UInt8(kAUSampler_DefaultMelodicBankMSB)
+        let lsb = UInt8(kAUSampler_DefaultBankLSB)
+        loadSoundBankInstrument(at: bankURL, program: 0, bankMSB: msb, bankLSB: lsb)
+    }
+    
+    public func loadPercussionBankInstrument(at bankURL: URL) {
+        let msb = UInt8(kAUSampler_DefaultPercussionBankMSB)
+        let lsb = UInt8(kAUSampler_DefaultBankLSB)
+        loadSoundBankInstrument(at: bankURL, program: 0, bankMSB: msb, bankLSB: lsb)
+    }
+    
+    public func loadAudioFiles(audioFiles: [URL]) {
+        do {
+            try samplerNode.loadAudioFiles(at: audioFiles)
+        } catch {
+            print("error load SoundBank")
+        }
+    }
+    
+    public func sendProgramChange(_ program: UInt8, bankMSB: UInt8, bankLSB: UInt8) {
+        samplerNode.sendProgramChange(program, bankMSB: bankMSB, bankLSB: bankLSB, onChannel: channelNumber)
     }
     
     public func turnOnSustain() {
