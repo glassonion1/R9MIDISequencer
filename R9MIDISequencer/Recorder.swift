@@ -69,29 +69,7 @@ public class Recorder {
         }
     }
     
-    public func noteOn(_ note: UInt8) {
-        //noteStartTimes[note] = Date().timeIntervalSince1970
-    }
-    
-    public func noteOff(_ note: UInt8) {
-        /*
-        guard let noteStartTime = noteStartTimes[note] else {
-            return
-        }
-        let duration = Date().timeIntervalSince1970 - noteStartTime
-        let beat = Date().timeIntervalSince1970 - startTime - duration
-        var message = MIDINoteMessage(channel: 1,
-                                      note: note,
-                                      velocity: 100,
-                                      releaseVelocity: 0,
-                                      duration: Float32(duration))
-        let status = MusicTrackNewMIDINoteEvent(track!, beat, &message)
-        if status != OSStatus(noErr) {
-            print("error creating midi note event \(status)")
-        }*/
-    }
-    
-    public func save(destinationURL: URL, fileName: String) {
+    public func save(fileURL: URL) {
         guard let sequence = musicSequence else {
             return
         }
@@ -99,12 +77,16 @@ public class Recorder {
             return
         }
         startTime = 0
-        let destinationFilePath = destinationURL.appendingPathComponent(fileName)
         // Save
-        let status = MusicSequenceFileCreate(sequence, destinationFilePath as CFURL, .midiType, [.eraseFile], 0)
+        let status = MusicSequenceFileCreate(sequence, fileURL as CFURL, .midiType, [.eraseFile], 0)
         if status != OSStatus(noErr) {
             print("error creating midi file \(status)")
         }
+    }
+    
+    public func save(destinationURL: URL, fileName: String) {
+        let destinationFilePath = destinationURL.appendingPathComponent(fileName)
+        save(fileURL: destinationFilePath)
     }
     
     private func createMIDIDestination() {
