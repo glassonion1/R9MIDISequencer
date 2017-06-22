@@ -24,8 +24,6 @@ open class Sequencer {
         })
     }
     
-    var enableLooping = false
-    
     var musicSequence: MusicSequence?
     var musicPlayer: MusicPlayer?
     
@@ -39,6 +37,7 @@ open class Sequencer {
     
     weak public var delegate: MIDIMessageListener?
     
+    public var enableLooping = false
     
     public var currentPositionInSeconds: TimeInterval {
         get {
@@ -51,9 +50,7 @@ open class Sequencer {
         }
     }
     
-    public init(enableLooping: Bool) {
-        
-        self.enableLooping = enableLooping
+    public init() {
         
         var result = OSStatus(noErr)
         result = NewMusicSequence(&musicSequence)
@@ -79,10 +76,6 @@ open class Sequencer {
         
         Thread.sleep(forTimeInterval: 0.2) // スリープを入れないとDestinationのコールバックが呼ばれない
         createMIDIDestination()
-    }
-    
-    public convenience init() {
-        self.init(enableLooping: false)
     }
     
     deinit {
@@ -126,19 +119,9 @@ open class Sequencer {
         
         var musicTrack: MusicTrack? = nil
         var sequenceLength: MusicTimeStamp = 0
-        var tracks: UInt32 = 0
-        MusicSequenceGetTrackCount(sequence, &tracks)
-        for i in 0 ..< tracks {
-            
-            if enableLooping {
-                var loopInfo = MusicTrackLoopInfo(loopDuration: 1, numberOfLoops: 0)
-                let lisize: UInt32 = 0
-                let status = MusicTrackSetProperty(musicTrack!, kSequenceTrackProperty_LoopInfo, &loopInfo, lisize )
-                if status != OSStatus(noErr) {
-                    print("Error setting loopinfo on track \(status)")
-                }
-            }
-            
+        var trackCount: UInt32 = 0
+        MusicSequenceGetTrackCount(sequence, &trackCount)
+        for i in 0 ..< trackCount {
             var trackLength: MusicTimeStamp = 0
             var trackLengthSize: UInt32 = 0
             
@@ -147,6 +130,15 @@ open class Sequencer {
             
             if sequenceLength < trackLength {
                 sequenceLength = trackLength
+            }
+            
+            if enableLooping {
+                var loopInfo = MusicTrackLoopInfo(loopDuration: 1, numberOfLoops: 0)
+                let lisize: UInt32 = 0
+                let status = MusicTrackSetProperty(musicTrack!, kSequenceTrackProperty_LoopInfo, &loopInfo, lisize )
+                if status != OSStatus(noErr) {
+                    print("Error setting loopinfo on track \(status)")
+                }
             }
         }
         
