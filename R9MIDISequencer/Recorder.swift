@@ -20,17 +20,11 @@ public class Recorder {
     var startTime: MusicTimeStamp = 0
     var noteStartTimes: [UInt8: MusicTimeStamp] = [:]
     
+    public var bpm: TimeInterval = 60.0
+    
     public init() {
-        var result = NewMusicSequence(&musicSequence)
-        if result != OSStatus(noErr) {
-            print("Error creating music sequence \(result)")
-        }
-        result = MusicSequenceNewTrack(musicSequence!, &track)
-        if result != OSStatus(noErr) {
-            print("Error creating track \(result)")
-        }
         
-        result = MIDIClientCreateWithBlock("MIDI Client" as CFString, &midiClient) { midiNotification in
+        let result = MIDIClientCreateWithBlock("MIDI Client" as CFString, &midiClient) { midiNotification in
             print(midiNotification)
         }
         if result != OSStatus(noErr) {
@@ -39,10 +33,6 @@ public class Recorder {
         
         Thread.sleep(forTimeInterval: 0.2) // スリープを入れないとDestinationのコールバックが呼ばれない
         createMIDIDestination()
-        result = MusicSequenceSetMIDIEndpoint(musicSequence!, midiDestination);
-        if result != OSStatus(noErr) {
-            print("error creating endpoint : \(result)")
-        }
     }
     
     deinit {
@@ -56,8 +46,18 @@ public class Recorder {
         }
     }
     
-    public func prepare(bpm: TimeInterval = 60.0) {
+    public func record() {
         startTime = Date().timeIntervalSince1970
+        
+        var result = NewMusicSequence(&musicSequence)
+        if result != OSStatus(noErr) {
+            print("Error creating music sequence \(result)")
+        }
+        result = MusicSequenceNewTrack(musicSequence!, &track)
+        if result != OSStatus(noErr) {
+            print("Error creating track \(result)")
+        }
+        
         var tempoTrack: MusicTrack?
         var status = MusicSequenceGetTempoTrack(musicSequence!, &tempoTrack)
         if status != OSStatus(noErr) {
@@ -66,6 +66,11 @@ public class Recorder {
         status = MusicTrackNewExtendedTempoEvent(tempoTrack!, 0, bpm)
         if status != OSStatus(noErr) {
             print("Error adding tempo to track: \(status)");
+        }
+        
+        result = MusicSequenceSetMIDIEndpoint(musicSequence!, midiDestination);
+        if result != OSStatus(noErr) {
+            print("error creating endpoint : \(result)")
         }
     }
     
@@ -82,11 +87,11 @@ public class Recorder {
         if status != OSStatus(noErr) {
             print("error creating midi file \(status)")
         }
-    }
-    
-    public func save(destinationURL: URL, fileName: String) {
-        let destinationFilePath = destinationURL.appendingPathComponent(fileName)
-        save(fileURL: destinationFilePath)
+        
+        if let mt = track {
+            MusicSequenceDisposeTrack(sequence, mt)
+        }
+        DisposeMusicSequence(sequence)
     }
     
     private func createMIDIDestination() {
@@ -98,6 +103,9 @@ public class Recorder {
                 return
             }
             guard localSelf.startTime != 0 else {
+                return
+            }
+            guard let mt = localSelf.track else {
                 return
             }
             let status = UInt8(packet.data.0)
@@ -114,7 +122,7 @@ public class Recorder {
                                               velocity: d2,
                                               releaseVelocity: d2,
                                               duration: 0)
-                let status = MusicTrackNewMIDINoteEvent(localSelf.track!, position, &message)
+                let status = MusicTrackNewMIDINoteEvent(mt, position, &message)
                 if status != OSStatus(noErr) {
                     print("error creating midi note event \(status)")
                 }

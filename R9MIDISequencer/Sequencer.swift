@@ -16,6 +16,9 @@ open class Sequencer {
         (obj, seq, mt, timestamp, userData, timestamp2, timestamp3) in
         // Cタイプ関数なのでselfを使えません
         unowned let mySelf: Sequencer = unsafeBitCast(obj, to: Sequencer.self)
+        if mySelf.enableLooping {
+            return
+        }
         OperationQueue.main.addOperation({
             mySelf.delegate?.midiSequenceDidFinish()
             if let player = mySelf.musicPlayer {
@@ -53,11 +56,6 @@ open class Sequencer {
     public init() {
         
         var result = OSStatus(noErr)
-        result = NewMusicSequence(&musicSequence)
-        if result != OSStatus(noErr) {
-            print("error creating sequence : \(result)")
-        }
-        
         result = NewMusicPlayer(&musicPlayer)
         if result != OSStatus(noErr) {
             print("error creating player : \(result)")
@@ -83,9 +81,6 @@ open class Sequencer {
         if let player = musicPlayer {
             DisposeMusicPlayer(player)
         }
-        if let seq = musicSequence {
-            DisposeMusicSequence(seq)
-        }
         MIDIEndpointDispose(midiDestination)
         MIDIClientDispose(midiClient)
     }
@@ -94,25 +89,21 @@ open class Sequencer {
         // 再生中だったら止める
         stop()
         
+        var result = NewMusicSequence(&musicSequence)
         guard let sequence = musicSequence else {
-            return
-        }
-        
-        guard let player = musicPlayer else {
+            print("error creating sequence : \(result)")
             return
         }
         
         // MIDIファイルの読み込み
         MusicSequenceFileLoad(sequence, midiFileUrl as CFURL, .midiType, MusicSequenceLoadFlags.smf_ChannelsToTracks)
         
-        MusicPlayerSetSequence(player, sequence)
-        
         // bpmの取得
         MusicSequenceGetBeatsForSeconds(sequence, 60, &bpm)
         
         // シーケンサにEndPointをセットする
         // trackが決まってからセットしないとだめ
-        var result = MusicSequenceSetMIDIEndpoint(sequence, midiDestination);
+        result = MusicSequenceSetMIDIEndpoint(sequence, midiDestination);
         if result != OSStatus(noErr) {
             print("error creating endpoint : \(result)")
         }
@@ -158,9 +149,13 @@ open class Sequencer {
     }
     
     public func play() {
+        guard let sequence = musicSequence else {
+            return
+        }
         guard let player = musicPlayer else {
             return
         }
+        MusicPlayerSetSequence(player, sequence)
         MusicPlayerPreroll(player)
         MusicPlayerStart(player)
     }
@@ -171,6 +166,9 @@ open class Sequencer {
     }
     
     public func stop() {
+        if let sequence = musicSequence {
+            DisposeMusicSequence(sequence)
+        }
         if let player = musicPlayer {
             MusicPlayerStop(player)
         }
