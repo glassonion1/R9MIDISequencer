@@ -1,9 +1,10 @@
 # R9MIDISequencer
 
-[![Platform support](https://img.shields.io/badge/platform-ios-lightgrey.svg?style=flat-square)](https://github.com/glassonion1/R9MIDISequencer/blob/master/LICENSE.md)
-[![License MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/glassonion1/R9MIDISequencer/blob/master/LICENSE.md)
+[![Version](https://img.shields.io/cocoapods/v/R9MIDISequencer.svg?style=flat)](http://cocoapods.org/pods/R9MIDISequencer)
+[![License](https://img.shields.io/cocoapods/l/R9MIDISequencer.svg?style=flat)](http://cocoapods.org/pods/R9MIDISequencer)
+[![Platform](https://img.shields.io/cocoapods/p/R9MIDISequencer.svg?style=flat)](http://cocoapods.org/pods/R9MIDISequencer)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
-[![CocoaPods Compatible](https://img.shields.io/cocoapods/v/ReSwift.svg?style=flat-square)](https://cocoapods.org/pods/R9MIDISequencer)
+
 
 MIDI Sequencer for iOS on swift.
 
