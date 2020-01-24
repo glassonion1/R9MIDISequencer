@@ -14,7 +14,9 @@
 		004F85B01C7F02030062E56E /* Sampler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 004F85AC1C7F02030062E56E /* Sampler.swift */; };
 		004F85B11C7F02030062E56E /* Sequencer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 004F85AD1C7F02030062E56E /* Sequencer.swift */; };
 		004F85C91C80281C0062E56E /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 004F85C81C80281C0062E56E /* Constants.swift */; };
+		0E7AF455900598DA91C01548 /* Pods_R9MIDISequencer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7158F6B663AB6F638E26FB2 /* Pods_R9MIDISequencer.framework */; };
 		6E313C871ED58EE900FE6A93 /* Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E313C861ED58EE900FE6A93 /* Recorder.swift */; };
+		B4F1BEDCA4280060B1D7D529 /* Pods_R9MIDISequencer_R9MIDISequencerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F388C822FD1BE5AA6AEB877A /* Pods_R9MIDISequencer_R9MIDISequencerTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,7 +40,13 @@
 		004F85AC1C7F02030062E56E /* Sampler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sampler.swift; sourceTree = "<group>"; };
 		004F85AD1C7F02030062E56E /* Sequencer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sequencer.swift; sourceTree = "<group>"; };
 		004F85C81C80281C0062E56E /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		5988D8E114C08363488E91B6 /* Pods-R9MIDISequencer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-R9MIDISequencer.release.xcconfig"; path = "Target Support Files/Pods-R9MIDISequencer/Pods-R9MIDISequencer.release.xcconfig"; sourceTree = "<group>"; };
+		674F1525EC5FE7032B1057E3 /* Pods-R9MIDISequencer-R9MIDISequencerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-R9MIDISequencer-R9MIDISequencerTests.release.xcconfig"; path = "Target Support Files/Pods-R9MIDISequencer-R9MIDISequencerTests/Pods-R9MIDISequencer-R9MIDISequencerTests.release.xcconfig"; sourceTree = "<group>"; };
 		6E313C861ED58EE900FE6A93 /* Recorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Recorder.swift; sourceTree = "<group>"; };
+		94E1ADAC06BA42B43BC89370 /* Pods-R9MIDISequencer-R9MIDISequencerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-R9MIDISequencer-R9MIDISequencerTests.debug.xcconfig"; path = "Target Support Files/Pods-R9MIDISequencer-R9MIDISequencerTests/Pods-R9MIDISequencer-R9MIDISequencerTests.debug.xcconfig"; sourceTree = "<group>"; };
+		A7158F6B663AB6F638E26FB2 /* Pods_R9MIDISequencer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_R9MIDISequencer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AD6F0D7C8DCE1BB1A6FA0678 /* Pods-R9MIDISequencer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-R9MIDISequencer.debug.xcconfig"; path = "Target Support Files/Pods-R9MIDISequencer/Pods-R9MIDISequencer.debug.xcconfig"; sourceTree = "<group>"; };
+		F388C822FD1BE5AA6AEB877A /* Pods_R9MIDISequencer_R9MIDISequencerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_R9MIDISequencer_R9MIDISequencerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,6 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0E7AF455900598DA91C01548 /* Pods_R9MIDISequencer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -54,6 +63,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				004F859B1C7F018E0062E56E /* R9MIDISequencer.framework in Frameworks */,
+				B4F1BEDCA4280060B1D7D529 /* Pods_R9MIDISequencer_R9MIDISequencerTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,6 +76,8 @@
 				004F85921C7F018E0062E56E /* R9MIDISequencer */,
 				004F859E1C7F018E0062E56E /* R9MIDISequencerTests */,
 				004F85911C7F018E0062E56E /* Products */,
+				EB9C623E41B20A7A9E50E429 /* Pods */,
+				239ECD7DB38F974CCB7CB5EF /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -101,6 +113,27 @@
 			path = R9MIDISequencerTests;
 			sourceTree = "<group>";
 		};
+		239ECD7DB38F974CCB7CB5EF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A7158F6B663AB6F638E26FB2 /* Pods_R9MIDISequencer.framework */,
+				F388C822FD1BE5AA6AEB877A /* Pods_R9MIDISequencer_R9MIDISequencerTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EB9C623E41B20A7A9E50E429 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				AD6F0D7C8DCE1BB1A6FA0678 /* Pods-R9MIDISequencer.debug.xcconfig */,
+				5988D8E114C08363488E91B6 /* Pods-R9MIDISequencer.release.xcconfig */,
+				94E1ADAC06BA42B43BC89370 /* Pods-R9MIDISequencer-R9MIDISequencerTests.debug.xcconfig */,
+				674F1525EC5FE7032B1057E3 /* Pods-R9MIDISequencer-R9MIDISequencerTests.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -119,6 +152,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 004F85A41C7F018E0062E56E /* Build configuration list for PBXNativeTarget "R9MIDISequencer" */;
 			buildPhases = (
+				DDD813DA4EC899C4532D404F /* [CP] Check Pods Manifest.lock */,
 				004F858B1C7F018E0062E56E /* Sources */,
 				004F858C1C7F018E0062E56E /* Frameworks */,
 				004F858D1C7F018E0062E56E /* Headers */,
@@ -137,6 +171,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 004F85A71C7F018E0062E56E /* Build configuration list for PBXNativeTarget "R9MIDISequencerTests" */;
 			buildPhases = (
+				F1FF5E0403FBAA59CA6C67D9 /* [CP] Check Pods Manifest.lock */,
 				004F85961C7F018E0062E56E /* Sources */,
 				004F85971C7F018E0062E56E /* Frameworks */,
 				004F85981C7F018E0062E56E /* Resources */,
@@ -206,6 +241,53 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		DDD813DA4EC899C4532D404F /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-R9MIDISequencer-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F1FF5E0403FBAA59CA6C67D9 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-R9MIDISequencer-R9MIDISequencerTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		004F858B1C7F018E0062E56E /* Sources */ = {
@@ -354,6 +436,7 @@
 		};
 		004F85A51C7F018E0062E56E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = AD6F0D7C8DCE1BB1A6FA0678 /* Pods-R9MIDISequencer.debug.xcconfig */;
 			buildSettings = {
 				BITCODE_GENERATION_MODE = bitcode;
 				CLANG_ENABLE_MODULES = YES;
@@ -381,6 +464,7 @@
 		};
 		004F85A61C7F018E0062E56E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5988D8E114C08363488E91B6 /* Pods-R9MIDISequencer.release.xcconfig */;
 			buildSettings = {
 				BITCODE_GENERATION_MODE = bitcode;
 				CLANG_ENABLE_MODULES = YES;
@@ -407,6 +491,7 @@
 		};
 		004F85A81C7F018E0062E56E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 94E1ADAC06BA42B43BC89370 /* Pods-R9MIDISequencer-R9MIDISequencerTests.debug.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = R9MIDISequencerTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -422,6 +507,7 @@
 		};
 		004F85A91C7F018E0062E56E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 674F1525EC5FE7032B1057E3 /* Pods-R9MIDISequencer-R9MIDISequencerTests.release.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = R9MIDISequencerTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
