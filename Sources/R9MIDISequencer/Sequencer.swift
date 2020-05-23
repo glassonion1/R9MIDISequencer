@@ -10,6 +10,7 @@ import AVFoundation
 import CoreMIDI
 import AudioToolbox
 
+@available(OSX 10.11, *)
 open class Sequencer {
     
     let callBack: @convention(c) (UnsafeMutableRawPointer?, MusicSequence, MusicTrack, MusicTimeStamp, UnsafePointer<MusicEventUserData>, MusicTimeStamp, MusicTimeStamp) -> Void = {
@@ -252,7 +253,7 @@ open class Sequencer {
                 handleMIDIMessage(packetPtr.pointee)
                 packetPtr = MIDIPacketNext(packetPtr)
             }
-            packetPtr.deinitialize()
+            packetPtr.deinitialize(count: -1)
         }
         if result != OSStatus(noErr) {
             print("error creating destination : \(result)")

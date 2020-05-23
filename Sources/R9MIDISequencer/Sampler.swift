@@ -9,15 +9,16 @@
 import AVFoundation
 import CoreMIDI
 
+@available(OSX 10.11, *)
 open class Sampler {
     
     // Sampler's volume
     public var volume: Float {
         get {
-            return samplerNode.volume
+            return samplerNode.masterGain
         }
         set(value) {
-            samplerNode.volume = value
+            samplerNode.masterGain = value
         }
     }
 
@@ -178,8 +179,8 @@ open class Sampler {
             }
         }
         
-        packetListPtr.deinitialize()
-        packetListPtr.deallocate(capacity: 1)//necessary? wish i could do this without the alloc above
+        packetListPtr.deinitialize(count: -1)
+        packetListPtr.deallocate()//necessary? wish i could do this without the alloc above
     }
     
     fileprivate func MIDINotifyBlock(_ midiNotification: UnsafePointer<MIDINotification>) {

@@ -10,6 +10,7 @@ import AVFoundation
 import CoreMIDI
 import AudioToolbox
 
+@available(OSX 10.11, *)
 public class Recorder {
     var musicSequence: MusicSequence?
     var track: MusicTrack?
@@ -152,7 +153,7 @@ public class Recorder {
                 handleMIDIMessage(packetPtr.pointee)
                 packetPtr = MIDIPacketNext(packetPtr)
             }
-            packetPtr.deinitialize()
+            packetPtr.deinitialize(count: -1)
         }
         if result != OSStatus(noErr) {
             print("error creating destination : \(result)")
