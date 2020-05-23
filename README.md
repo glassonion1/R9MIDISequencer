@@ -64,3 +64,25 @@ class GameScene: SKScene, MIDIMessageListener {
     }
 }
 ```
+
+## Installation
+
+### Swift Package Manager
+Create a Package.swift file.
+```swift
+import PackageDescription
+
+let package = Package(
+  name: "RxTestProject",
+  dependencies: [
+    .package(url: "https://github.com/glassonion1/R9MIDISequencer.git", from: "1.5.1")
+  ],
+  targets: [
+    .target(name: "RxTestProject", dependencies: ["R9MIDISequencer"])
+  ]
+)
+```
+
+## License
+
+R9MIDISequencer is available under the MIT license. See the LICENSE file for more info.

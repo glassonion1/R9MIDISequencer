@@ -10,7 +10,7 @@ import AVFoundation
 import CoreMIDI
 import AudioToolbox
 
-@available(OSX 10.11, *)
+@available(iOS 9.0, *)
 public class Recorder {
     var musicSequence: MusicSequence?
     var track: MusicTrack?

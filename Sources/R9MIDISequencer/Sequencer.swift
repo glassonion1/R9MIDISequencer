@@ -10,7 +10,7 @@ import AVFoundation
 import CoreMIDI
 import AudioToolbox
 
-@available(OSX 10.11, *)
+@available(iOS 9.0, *)
 open class Sequencer {
     
     let callBack: @convention(c) (UnsafeMutableRawPointer?, MusicSequence, MusicTrack, MusicTimeStamp, UnsafePointer<MusicEventUserData>, MusicTimeStamp, MusicTimeStamp) -> Void = {
