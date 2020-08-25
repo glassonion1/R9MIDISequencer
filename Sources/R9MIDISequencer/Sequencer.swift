@@ -253,7 +253,7 @@ open class Sequencer {
                 handleMIDIMessage(packetPtr.pointee)
                 packetPtr = MIDIPacketNext(packetPtr)
             }
-            packetPtr.deinitialize(count: -1)
+            packetPtr.deallocate()
         }
         if result != OSStatus(noErr) {
             print("error creating destination : \(result)")

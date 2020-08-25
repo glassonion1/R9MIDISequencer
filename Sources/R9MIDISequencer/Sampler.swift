@@ -178,8 +178,6 @@ open class Sampler {
                 }
             }
         }
-        
-        packetListPtr.deinitialize(count: -1)
         packetListPtr.deallocate()//necessary? wish i could do this without the alloc above
     }
     
