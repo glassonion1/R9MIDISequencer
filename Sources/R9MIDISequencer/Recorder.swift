@@ -153,7 +153,6 @@ public class Recorder {
                 handleMIDIMessage(packetPtr.pointee)
                 packetPtr = MIDIPacketNext(packetPtr)
             }
-            packetPtr.deallocate()
         }
         if result != OSStatus(noErr) {
             print("error creating destination : \(result)")

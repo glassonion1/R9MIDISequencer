@@ -249,11 +249,10 @@ open class Sequencer {
             let packet: MIDIPacket = packets.packet
             var packetPtr: UnsafeMutablePointer<MIDIPacket> = UnsafeMutablePointer.allocate(capacity: 1)
             packetPtr.initialize(to: packet)
-            for _ in 0 ..< packets.numPackets {
+            for i in 0 ..< packets.numPackets {
                 handleMIDIMessage(packetPtr.pointee)
                 packetPtr = MIDIPacketNext(packetPtr)
             }
-            packetPtr.deallocate()
         }
         if result != OSStatus(noErr) {
             print("error creating destination : \(result)")
