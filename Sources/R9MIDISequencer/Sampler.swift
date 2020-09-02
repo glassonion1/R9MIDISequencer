@@ -9,7 +9,7 @@
 import AVFoundation
 import CoreMIDI
 
-@available(iOS 9.0, *)
+@available(OSX 10.11, *)
 open class Sampler {
     
     // Sampler's volume

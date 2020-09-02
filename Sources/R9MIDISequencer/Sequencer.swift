@@ -10,7 +10,7 @@ import AVFoundation
 import CoreMIDI
 import AudioToolbox
 
-@available(iOS 9.0, *)
+@available(OSX 10.11, *)
 open class Sequencer {
     
     let callBack: @convention(c) (UnsafeMutableRawPointer?, MusicSequence, MusicTrack, MusicTimeStamp, UnsafePointer<MusicEventUserData>, MusicTimeStamp, MusicTimeStamp) -> Void = {
@@ -172,6 +172,7 @@ open class Sequencer {
         }
         if let player = musicPlayer {
             MusicPlayerStop(player)
+            MusicPlayerSetTime(player, 0)
         }
     }
     
@@ -249,7 +250,7 @@ open class Sequencer {
             let packet: MIDIPacket = packets.packet
             var packetPtr: UnsafeMutablePointer<MIDIPacket> = UnsafeMutablePointer.allocate(capacity: 1)
             packetPtr.initialize(to: packet)
-            for i in 0 ..< packets.numPackets {
+            for _ in 0 ..< packets.numPackets {
                 handleMIDIMessage(packetPtr.pointee)
                 packetPtr = MIDIPacketNext(packetPtr)
             }
