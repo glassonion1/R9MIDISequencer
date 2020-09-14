@@ -83,31 +83,35 @@ open class Sampler {
     }
     
     // If your bank has only one instrument, it seems likely that it is at program 0.
-    public func loadSoundBankInstrument(at bankURL: URL, program: UInt8, bankMSB: UInt8, bankLSB: UInt8) {
-        do {
-            try samplerNode.loadSoundBankInstrument(at: bankURL, program: program, bankMSB: bankMSB, bankLSB: bankLSB)
-        } catch {
-            print("error load SoundBank")
-        }
+    public func loadSoundBankInstrument(at bankURL: URL, program: UInt8, bankMSB: UInt8, bankLSB: UInt8) throws { try samplerNode.loadSoundBankInstrument(at: bankURL, program: program, bankMSB: bankMSB, bankLSB: bankLSB)
     }
     
     public func loadMelodicBankInstrument(at bankURL: URL) {
         let msb = UInt8(kAUSampler_DefaultMelodicBankMSB)
         let lsb = UInt8(kAUSampler_DefaultBankLSB)
-        loadSoundBankInstrument(at: bankURL, program: 0, bankMSB: msb, bankLSB: lsb)
+        do {
+            try loadSoundBankInstrument(at: bankURL, program: 0, bankMSB: msb, bankLSB: lsb)
+        } catch {
+            print("error load SoundBank")
+        }
     }
     
     public func loadPercussionBankInstrument(at bankURL: URL) {
         let msb = UInt8(kAUSampler_DefaultPercussionBankMSB)
         let lsb = UInt8(kAUSampler_DefaultBankLSB)
-        loadSoundBankInstrument(at: bankURL, program: 0, bankMSB: msb, bankLSB: lsb)
+        do {
+            try loadSoundBankInstrument(at: bankURL, program: 0, bankMSB: msb, bankLSB: lsb)
+        } catch {
+            // If percussion bank loaded to error. It tries to load the melodic bank.
+            loadMelodicBankInstrument(at: bankURL)
+        }
     }
     
     public func loadAudioFiles(audioFiles: [URL]) {
         do {
             try samplerNode.loadAudioFiles(at: audioFiles)
         } catch {
-            print("error load SoundBank")
+            print("error load sound files")
         }
     }
     
