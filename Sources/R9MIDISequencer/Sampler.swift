@@ -174,7 +174,7 @@ open class Sampler {
             let name = Unmanaged.fromOpaque(
                 cfName!.toOpaque()).takeUnretainedValue() as CFString
             // シーケンサー側には送らない
-            if String(name) != Constants.midiDestinationName {
+            if String(name) != R9Constants.midiDestinationName {
                 result = MIDISend(midiOutPort, destination, packetListPtr)
                 if result == OSStatus(noErr) {
                     print("sent midi")

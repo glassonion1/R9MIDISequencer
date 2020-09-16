@@ -126,7 +126,7 @@ open class Sequencer {
             }
             
             if enableLooping {
-                var loopInfo = MusicTrackLoopInfo(loopDuration: 1, numberOfLoops: 0)
+                var loopInfo = MusicTrackLoopInfo(loopDuration: trackLength, numberOfLoops: 0)
                 let lisize: UInt32 = 0
                 let status = MusicTrackSetProperty(musicTrack!, kSequenceTrackProperty_LoopInfo, &loopInfo, lisize )
                 if status != OSStatus(noErr) {
@@ -245,7 +245,7 @@ open class Sequencer {
         }
         
         var result = OSStatus(noErr)
-        let name = Constants.midiDestinationName as CFString
+        let name = R9Constants.midiDestinationName as CFString
         result = MIDIDestinationCreateWithBlock(midiClient, name, &midiDestination) { (packetList, srcConnRefCon) in
             let packets = packetList.pointee
             let packet: MIDIPacket = packets.packet

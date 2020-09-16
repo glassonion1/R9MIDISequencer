@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Constants {
+struct R9Constants {
     static let midiDestinationName: String = {
         // アプリごとに名前を変える
         let id = Bundle.main.bundleIdentifier ?? ""

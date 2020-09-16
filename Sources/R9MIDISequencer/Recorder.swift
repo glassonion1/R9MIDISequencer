@@ -144,7 +144,7 @@ public class Recorder {
         }
         
         var result = OSStatus(noErr)
-        let name = Constants.midiRecorderDestinationName as CFString
+        let name = R9Constants.midiRecorderDestinationName as CFString
         result = MIDIDestinationCreateWithBlock(midiClient, name, &midiDestination) { (packetList, srcConnRefCon) in
             let packets = packetList.pointee
             let packet: MIDIPacket = packets.packet
