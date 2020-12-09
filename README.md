@@ -13,7 +13,7 @@ R9MIDISequencer now features a full MIDI Sequencer with EXS24 and SoundFont samp
 
 Play note using the sampler:
 
-```
+```swift
 import R9MIDISequencer
 
 let url = Bundle.main.url(forResource: “Sound Font File Name”,
@@ -30,7 +30,7 @@ sampler.startNoteWithNumber(43)
 
 Play MIDI file using the Sequencer:
 
-```
+```swift
 let sequencer = Sequencer(sampler: sampler, enableLooping: true)
 
 let midiUrl = Bundle.main.url(forResource: “MIDI File",
@@ -40,7 +40,7 @@ sequencer.playWithMidiURL(midiUrl)
 
 Callback from MIDI message
 
-```
+```swift
 class GameScene: SKScene, MIDIMessageListener {
     override func didMoveToView(view: SKView) {
         
